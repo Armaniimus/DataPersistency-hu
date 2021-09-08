@@ -1,0 +1,5 @@
+installeer postgres https://www.postgresql.org/
+installeer pgAdmin  https://www.pgadmin.org/
+installeer postgress driver https://jdbc.postgresql.org/download.html
+
+creeër de casus databases en gooi alle create en insert statements erin
