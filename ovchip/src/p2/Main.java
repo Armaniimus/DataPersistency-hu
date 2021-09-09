@@ -26,8 +26,8 @@ public class Main {
             String pass = "K1ll3r0p";
 
             connection = DriverManager.getConnection(dbUrl, user, pass);
-        } catch (Exception sqlex) {
-
+        } catch (Exception err) {
+            System.err.println("error in main.getConnection() " + err.getMessage() );
         }
         return connection;
     }
@@ -35,8 +35,8 @@ public class Main {
     private static void closeConnection() {
         try {
             connection.close();
-        } catch (Exception sqlex) {
-
+        } catch (Exception err) {
+            System.err.println("error in main.closeConnection() " + err.getMessage() );
         }
     }
 
@@ -67,5 +67,42 @@ public class Main {
         System.out.println(reizigers.size() + " reizigers\n");
 
         // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
+
+        // update reiziger
+        System.out.println("[Test] before update:" + sietske);
+        sietske.setTussenvoegsel("de");
+        sietske.setAchternaam("boer");
+        rdao.update(sietske);
+
+        System.out.print("[Test] after update:");
+        reizigers = rdao.findAll();
+        System.out.println(" ReizigerDAO.findAll() geeft de volgende reizigers:");
+        for (Reiziger r : reizigers) {
+            System.out.println(r);
+        }
+        System.out.println();
+
+        // Delete reiziger
+        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.delete() ");
+        rdao.delete(sietske);
+        reizigers = rdao.findAll();
+        System.out.println(reizigers.size() + " reizigers");
+        System.out.println();
+
+        // FindById reiziger
+        System.out.println("[Test] findByID id 4 wordt gezocht");
+        Reiziger reizigerVier = rdao.findbyid(4);
+        System.out.println(reizigerVier);
+        System.out.println();
+
+        // FindByGbDatum
+//        "2002-10-22";
+        System.out.println("[Test] ReizigerDAO.findByGBdatum(\" 2002-10-22 \") geeft de volgende reizigers:");
+        List<Reiziger> reizigersGb = rdao.findByGBdatum("2002-10-22");
+
+        for (Reiziger r : reizigersGb) {
+            System.out.println(r);
+        }
+        System.out.println();
     }
 }

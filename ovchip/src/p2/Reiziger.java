@@ -1,5 +1,7 @@
 package p2;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Reiziger {
@@ -66,6 +68,14 @@ public class Reiziger {
     }
 
     public String toString() {
-        return this.toString();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String gDatumStr = dateFormat.format(this.geboorteDatum);
+
+        String reizigerStr = "";
+        reizigerStr += this.id + " ";
+        reizigerStr += this.getName() + " ";
+        reizigerStr += gDatumStr;
+
+        return reizigerStr;
     };
 }
