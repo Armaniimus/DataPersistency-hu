@@ -6,14 +6,15 @@ import java.util.List;
 
 public class ReizigerDAOPsql implements ReizigerDAO {
     private Connection conn;
+    private AdresDAO adao;
 
     public ReizigerDAOPsql(Connection connection) {
         this.conn = connection;
+         adao = new AdresDAOPsql(connection);
     }
 
     public boolean save(Reiziger reiziger) {
         try {
-            //String voorletters, String tussenvoegsel, String achternaam, Date geboorteDatum
             String q = "INSERT INTO reiziger (reiziger_id, voorletters, tussenvoegsel, achternaam, geboorteDatum) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement pst = this.conn.prepareStatement(q);
             pst.setInt(1, reiziger.getId() );

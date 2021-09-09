@@ -12,11 +12,18 @@ public class Main {
     public static void main(String[] args) {
         Connection localConn = getConnection();
         ReizigerDAO rdao = new ReizigerDAOPsql(localConn);
+        AdresDAO adao = new AdresDAOPsql(localConn);
 
         try {
             testReizigerDAO(rdao);
         }  catch(Exception err) {
             System.err.println("error in testReizigersDAO " + err.getMessage() );
+        }
+
+        try {
+            testAdresDAO(adao);
+        }  catch(Exception err) {
+            System.err.println("error in testAdresDAO " + err.getMessage() );
         }
 
         closeConnection();
@@ -69,8 +76,6 @@ public class Main {
         reizigers = rdao.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
 
-        // Voeg aanvullende tests van de ontbrekende CRUD-operaties in.
-
         // update reiziger
         System.out.println("[Test] before update:" + sietske);
         sietske.setTussenvoegsel("de");
@@ -106,6 +111,58 @@ public class Main {
         for (Reiziger r : reizigersGb) {
             System.out.println(r);
         }
+        System.out.println();
+
+//        String gbdatum2 = "1981-03-14";
+//        Reiziger test = new Reiziger(6, "t", "est", " voor adres", Date.valueOf(gbdatum2));
+//        rdao.save(test);
+    }
+
+    private static void testAdresDAO(AdresDAO adao) throws SQLException {
+        System.out.println("\n---------- Test AdresDAO -------------");
+
+        // Haal alle reizigers op uit de database
+        List<Adres> adressen = adao.findAll();
+        System.out.println("[Test] AdresDAO.findAll() geeft de volgende adressen:");
+        for (Adres a : adressen) {
+            System.out.println(a);
+        }
+        System.out.println();
+
+        // Maak een nieuwe Adres aan en persisteer deze in de database
+        Adres newAdres = new Adres(20, "5654DE", "45", "toetsenbordlaan", "utrecht", 6);
+        System.out.print("[Test] Eerst " + adressen.size() + " adressen, na AdresDAO.save() ");
+        adao.save(newAdres);
+        adressen = adao.findAll();
+        System.out.println(adressen.size() + " adressen\n");
+
+        // update adres
+        System.out.println("[Test] before update:" + newAdres);
+        newAdres.setWoonplaats("Utrecht");
+        newAdres.setPostcode("Qwerty");
+        adao.update(newAdres);
+
+        System.out.print("[Test] after update:");
+        adressen = adao.findAll();
+        System.out.println(" AdresDAO.findAll() geeft de volgende Adressen:");
+        for (Adres a : adressen) {
+            System.out.println(a);
+        }
+        System.out.println();
+
+        // Delete adres
+        System.out.print("[Test] Eerst " + adressen.size() + " adressen, na AdresDAO.delete() ");
+        adao.delete(newAdres);
+        adressen = adao.findAll();
+        System.out.println(adressen.size() + " adressen");
+        System.out.println();
+
+        // FindByreiziger reiziger
+        System.out.println("[Test] findByAdres reiziger met id 1 wordt gezocht");
+
+        ReizigerDAO rdao = new ReizigerDAOPsql(connection);
+        Adres gevondenAdres = adao.findByReiziger( rdao.findbyid(1) );
+        System.out.println(gevondenAdres);
         System.out.println();
     }
 }
