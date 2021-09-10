@@ -33,6 +33,39 @@ public class Reiziger {
         }
     }
 
+    public String toString() {
+        String reizigerStr = "Reiziger{ ";
+
+        reizigerStr += __internalGetInfo() + ", ";
+        if (this.adresObj != null) {
+            reizigerStr += "Adres" + this.adresObj.getInfo();
+        } else {
+            reizigerStr += ", null";
+        }
+
+        reizigerStr += " }";
+
+        return reizigerStr;
+    }
+
+    public String getInfo() {
+        String reizigerStr = __internalGetInfo();
+        return reizigerStr;
+    }
+
+    private String __internalGetInfo() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String gDatumStr = dateFormat.format(this.geboorteDatum);
+
+        String reizigerStr = "";
+        reizigerStr += this.id + ", ";
+        reizigerStr += this.voorletters + ", ";
+        reizigerStr += this.tussenvoegsel + ", ";
+        reizigerStr += this.achternaam + ", ";
+        reizigerStr += gDatumStr;
+        return reizigerStr;
+    }
+
     public int getId() {
         return this.id;
     }
@@ -73,40 +106,12 @@ public class Reiziger {
         return geboorteDatum;
     }
 
-    public void setAdresObj(Adres adresObj) {
+    public void setAdres(Adres adresObj) {
         this.adresObj = adresObj;
     }
 
-    public Adres getAdresObj() {
+    public Adres getAdres() {
         return adresObj;
     }
 
-    private String __internalGetInfo() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String gDatumStr = dateFormat.format(this.geboorteDatum);
-
-        String reizigerStr = "";
-        reizigerStr += this.id + ", ";
-        reizigerStr += this.voorletters + ", ";
-        reizigerStr += this.tussenvoegsel + ", ";
-        reizigerStr += this.achternaam + ", ";
-        reizigerStr += gDatumStr;
-        return reizigerStr;
-    }
-
-    public String getInfo() {
-        String reizigerStr = __internalGetInfo();
-        return reizigerStr;
-    }
-
-    public String toString() {
-        String reizigerStr = "Reiziger{ ";
-
-        reizigerStr += __internalGetInfo() + ", Adres";
-        reizigerStr += this.adresObj.getInfo();
-
-        reizigerStr += " }";
-
-        return reizigerStr;
-    };
 }

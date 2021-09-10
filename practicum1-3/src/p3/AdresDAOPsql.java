@@ -18,7 +18,6 @@ public class AdresDAOPsql implements AdresDAO {
 
     public boolean save(Adres adres) {
         try {
-//            String postcode, String huisnummer, String straat, String woonplaats, reiziger_id
             String q = "INSERT INTO adres (adres_id, postcode, huisnummer, straat, woonplaats, reiziger_id) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement pst = this.conn.prepareStatement(q);
             pst.setInt(1,    adres.getId() );
@@ -66,17 +65,35 @@ public class AdresDAOPsql implements AdresDAO {
 
             return true;
         } catch(Exception err) {
-            System.err.println("AdresDAOsql geeft een error in save(): " + err.getMessage() );
+            System.err.println("AdresDAOsql geeft een error in delete(): " + err.getMessage() );
             return false;
         }
     };
 
     public Adres findByReiziger(Reiziger reiziger) {
-        int reiziger_id = reiziger.getId();
-        Adres adres = findByReizigerId(reiziger_id);
-        adres.setReiziger(reiziger);
+        try {
+            String q = "SELECT * FROM Adres WHERE reiziger_id = ?";
+            PreparedStatement pst = this.conn.prepareStatement(q);
+            pst.setInt(1, reiziger.getId() );
+            ResultSet rs = pst.executeQuery();
 
-        return adres;
+            rs.next();
+            Adres adres = new Adres(
+                    rs.getInt("adres_id"),
+                    rs.getString("straat"),
+                    rs.getString("huisnummer"),
+                    rs.getString("postcode"),
+                    rs.getString("woonplaats"),
+                    rs.getInt("reiziger_id"),
+                    reiziger
+            );
+
+            return adres;
+
+        } catch(Exception err) {
+            System.err.println("AdresDAOsql geeft een error in findByReiziger(): " + err.getMessage() );
+            return new Adres(0, "", "", "", "", 0, null);
+        }
     };
 
     public Adres findByReizigerId(int id) {
@@ -84,27 +101,24 @@ public class AdresDAOPsql implements AdresDAO {
             String q = "SELECT * FROM Adres WHERE reiziger_id = ?";
             PreparedStatement pst = this.conn.prepareStatement(q);
             pst.setInt(1, id );
+
             ResultSet rs = pst.executeQuery();
-
-            rs.next();
-            Adres adres = new Adres(
-                rs.getInt("adres_id"),
-                rs.getString("straat"),
-                rs.getString("huisnummer"),
-                rs.getString("postcode"),
-                rs.getString("woonplaats"),
-                rs.getInt("reiziger_id"),
-                null
-            );
-
-//            Reiziger reiziger = rdao.findByidNoAdres( rs.getInt("reiziger_id") );
-//            reiziger.setAdresObj(adres);
-//            adres.setReiziger(reiziger);
-
-            return adres;
+            if ( rs.next() ) {
+                return new Adres(
+                    rs.getInt("adres_id"),
+                    rs.getString("straat"),
+                    rs.getString("huisnummer"),
+                    rs.getString("postcode"),
+                    rs.getString("woonplaats"),
+                    rs.getInt("reiziger_id"),
+                    null
+                );
+            } else {
+                return null;
+            }
 
         } catch(Exception err) {
-            System.err.println("AdresDAOsql geeft een error in save(): " + err.getMessage() );
+            System.err.println("AdresDAOsql geeft een error in findByReizigerId(): " + err.getMessage() );
             return new Adres(0, "", "", "", "", 0, null);
         }
     }
@@ -116,6 +130,8 @@ public class AdresDAOPsql implements AdresDAO {
             ResultSet rs = st.executeQuery("select * from adres");
 
             while (rs.next()) {
+                Reiziger reiziger = rdao.findByidNoAdres( rs.getInt("reiziger_id") );
+
                 Adres adres = new Adres(
                     rs.getInt("adres_id"),
                     rs.getString("postcode"),
@@ -123,12 +139,8 @@ public class AdresDAOPsql implements AdresDAO {
                     rs.getString("straat"),
                     rs.getString("woonplaats"),
                     rs.getInt("reiziger_id"),
-                    null
+                    reiziger
                 );
-
-//                Reiziger reiziger = rdao.findByidNoAdres( rs.getInt("reiziger_id") );
-//                reiziger.setAdresObj(adres);
-//                adres.setReiziger(reiziger);
 
                 adresArray.add(adres);
             }
@@ -138,5 +150,4 @@ public class AdresDAOPsql implements AdresDAO {
         }
         return adresArray;
     }
-
 }

@@ -72,57 +72,58 @@ public class Main {
         System.out.println();
 
         // Maak een nieuwe reiziger aan en persisteer deze in de database
-//        String gbdatum = "1981-03-14";
-//        Adres adresSietske = new Adres(20, "", "", "", "", 77);
-//        Reiziger sietske = new Reiziger(77, "S", "", "Boers", Date.valueOf(gbdatum), adresSietske);
-//        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
-//        rdao.save(sietske);
-//        reizigers = rdao.findAll();
-//        System.out.println(reizigers.size() + " reizigers\n");
-//
-//        // update reiziger
-//        System.out.println("[Test] before update:" + sietske);
-//        sietske.setTussenvoegsel("de");
-//        sietske.setAchternaam("boer");
-//        rdao.update(sietske);
-//
-//        System.out.print("[Test] after update:");
-//        reizigers = rdao.findAll();
-//        System.out.println(" ReizigerDAO.findAll() geeft de volgende reizigers:");
-//        for (Reiziger r : reizigers) {
-//            System.out.println(r);
-//        }
-//        System.out.println();
-//
-//        // Delete reiziger
-//        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.delete() ");
-//        rdao.delete(sietske);
-//        reizigers = rdao.findAll();
-//        System.out.println(reizigers.size() + " reizigers");
-//        System.out.println();
-//
-//        // FindById reiziger
-//        System.out.println("[Test] findByID id 4 wordt gezocht");
-//        Reiziger reizigerVier = rdao.findbyid(4);
-//        System.out.println(reizigerVier);
-//        System.out.println();
-//
-//        // FindByGbDatum
-////        "2002-10-22";
-//        System.out.println("[Test] ReizigerDAO.findByGBdatum(\" 2002-10-22 \") geeft de volgende reizigers:");
-//        List<Reiziger> reizigersGb = rdao.findByGBdatum("2002-10-22");
-//
-//        for (Reiziger r : reizigersGb) {
-//            System.out.println(r);
-//        }
-//        System.out.println();
+        String gbdatum = "1981-03-14";
+        Reiziger sietske = new Reiziger(77, "S", "", "Boers", Date.valueOf(gbdatum), null);
+        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
+        rdao.save(sietske);
+        reizigers = rdao.findAll();
+        System.out.println(reizigers.size() + " reizigers\n");
 
-//        String gbdatum2 = "1981-03-14";
-//        Reiziger test = new Reiziger(6, "t", "est", " voor adres", Date.valueOf(gbdatum2));
-//        rdao.save(test);
+        // update reiziger
+        System.out.println("[Test] before update:" + sietske);
+        sietske.setTussenvoegsel("de");
+        sietske.setAchternaam("boer");
+        rdao.update(sietske);
+
+        System.out.print("[Test] after update:");
+        reizigers = rdao.findAll();
+        System.out.println(" ReizigerDAO.findAll() geeft de volgende reizigers:");
+        for (Reiziger r : reizigers) {
+            System.out.println(r);
+        }
+        System.out.println();
+
+        // Delete reiziger
+        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.delete() ");
+        rdao.delete(sietske);
+        reizigers = rdao.findAll();
+        System.out.println(reizigers.size() + " reizigers");
+        System.out.println();
+
+        // FindById reiziger
+        System.out.println("[Test] findByID id 4 wordt gezocht");
+        Reiziger reizigerVier = rdao.findbyid(4);
+        System.out.println(reizigerVier);
+        System.out.println();
+
+        // FindByGbDatum
+        System.out.println("[Test] ReizigerDAO.findByGBdatum(\" 2002-10-22 \") geeft de volgende reizigers:");
+        List<Reiziger> reizigersGb = rdao.findByGBdatum("2002-10-22");
+
+        for (Reiziger r : reizigersGb) {
+            System.out.println(r);
+        }
+        System.out.println();
+
     }
 
     private static void testAdresDAO() throws SQLException {
+        if (rdao.findbyid(6) == null) {
+            String gbdatum2 = "1981-03-14";
+            Reiziger test = new Reiziger(6, "t", "est", " voor adres", Date.valueOf(gbdatum2), null);
+            rdao.save(test);
+        }
+
         System.out.println("\n---------- Test AdresDAO -------------");
 
         // Haal alle reizigers op uit de database
