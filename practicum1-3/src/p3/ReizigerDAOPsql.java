@@ -6,11 +6,11 @@ import java.util.List;
 
 public class ReizigerDAOPsql implements ReizigerDAO {
     private Connection conn;
-    private AdresDAO adao;
+    private AdresDAOPsql adao;
 
-    public ReizigerDAOPsql(Connection connection) {
+    public ReizigerDAOPsql(Connection connection, AdresDAOPsql localAdao) {
         this.conn = connection;
-         adao = new AdresDAOPsql(connection);
+        adao = localAdao;
     }
 
     public boolean save(Reiziger reiziger) {
@@ -64,6 +64,39 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     };
 
     public Reiziger findbyid(int id) {
+        Reiziger reiziger = this.findByidNoAdres(id);
+
+        int reizigerId = reiziger.getId();
+        Adres adres = adao.findByReizigerId( reizigerId );
+        reiziger.setAdresObj(adres);
+
+        return reiziger;
+
+//        try {
+//            String q = "SELECT * FROM reiziger WHERE reiziger_id = ?";
+//            PreparedStatement pst = this.conn.prepareStatement(q);
+//            pst.setInt(1, id );
+//            ResultSet rs = pst.executeQuery();
+//
+//            rs.next();
+//            int reizigerId = rs.getInt("reiziger_id");
+//            Adres adres = adao.findByReizigerId( reizigerId );
+//
+//            return new Reiziger(
+//                    rs.getInt("reiziger_id"),
+//                    rs.getString("voorletters"),
+//                    rs.getString("tussenvoegsel"),
+//                    rs.getString("achternaam"),
+//                    rs.getDate("geboorteDatum"),
+//                    adres
+//            );
+//        } catch(Exception err) {
+//            System.err.println("ReizigersDAOsql geeft een error in findbyid(): " + err.getMessage() );
+//            return new Reiziger(0, "", "", "", Date.valueOf("00-00-0000"), new Adres( 0,"", "", "", "", 0) );
+//        }
+    };
+
+    public Reiziger findByidNoAdres(int id){
         try {
             String q = "SELECT * FROM reiziger WHERE reiziger_id = ?";
             PreparedStatement pst = this.conn.prepareStatement(q);
@@ -76,14 +109,15 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                 rs.getString("voorletters"),
                 rs.getString("tussenvoegsel"),
                 rs.getString("achternaam"),
-                rs.getDate("geboorteDatum")
+                rs.getDate("geboorteDatum"),
+                null
             );
 
         } catch(Exception err) {
             System.err.println("ReizigersDAOsql geeft een error in findbyid(): " + err.getMessage() );
-            return new Reiziger(0, "", "", "", Date.valueOf("00-00-0000") );
+            return new Reiziger(0, "", "", "", Date.valueOf("00-00-0000"), new Adres( 0,"", "", "", "", 0, null) );
         }
-    };
+    }
 
     public List<Reiziger> findByGBdatum(String datum) {
         List<Reiziger> reizigersArray = new ArrayList<>();
@@ -95,13 +129,18 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
+                int reizigerId = rs.getInt("reiziger_id");
+                Adres adres = adao.findByReizigerId( reizigerId );
+
                 Reiziger reiziger = new Reiziger(
                     rs.getInt("reiziger_id"),
                     rs.getString("voorletters"),
                     rs.getString("tussenvoegsel"),
                     rs.getString("achternaam"),
-                    rs.getDate("geboorteDatum")
+                    rs.getDate("geboorteDatum"),
+                    adres
                 );
+
                 reizigersArray.add(reiziger);
             }
 
@@ -109,6 +148,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         } catch(Exception err) {
             System.err.println("ReizigersDAOsql geeft een error in findByGbDatum(): " + err.getMessage() );
             return reizigersArray;
+
         }
     };
 
@@ -120,12 +160,16 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             ResultSet rs = st.executeQuery("select * from reiziger");
 
             while (rs.next()) {
+                int reizigerId = rs.getInt("reiziger_id");
+                Adres adres = adao.findByReizigerId( reizigerId );
+
                 Reiziger reiziger = new Reiziger(
                     rs.getInt("reiziger_id"),
                     rs.getString("voorletters"),
                     rs.getString("tussenvoegsel"),
                     rs.getString("achternaam"),
-                    rs.getDate("geboorteDatum")
+                    rs.getDate("geboorteDatum"),
+                    adres
                 );
                 reizigersArray.add(reiziger);
             }

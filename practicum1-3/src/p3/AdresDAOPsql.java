@@ -6,9 +6,14 @@ import java.util.List;
 
 public class AdresDAOPsql implements AdresDAO {
     private Connection conn;
+    private ReizigerDAOPsql rdao;
 
     public AdresDAOPsql(Connection localConn) {
         this.conn = localConn;
+    }
+
+    public void connectRDAO(ReizigerDAOPsql rdao) {
+        this.rdao = rdao;
     }
 
     public boolean save(Adres adres) {
@@ -47,7 +52,7 @@ public class AdresDAOPsql implements AdresDAO {
             pst.execute();
             return true;
         } catch(Exception err) {
-            System.err.println("AdresDAOsql geeft een error in save(): " + err.getMessage() );
+            System.err.println("AdresDAOsql geeft een error in update(): " + err.getMessage() );
             return false;
         }
     }
@@ -68,27 +73,41 @@ public class AdresDAOPsql implements AdresDAO {
 
     public Adres findByReiziger(Reiziger reiziger) {
         int reiziger_id = reiziger.getId();
+        Adres adres = findByReizigerId(reiziger_id);
+        adres.setReiziger(reiziger);
+
+        return adres;
+    };
+
+    public Adres findByReizigerId(int id) {
         try {
             String q = "SELECT * FROM Adres WHERE reiziger_id = ?";
             PreparedStatement pst = this.conn.prepareStatement(q);
-            pst.setInt(1, reiziger_id );
+            pst.setInt(1, id );
             ResultSet rs = pst.executeQuery();
 
             rs.next();
-            return new Adres(
+            Adres adres = new Adres(
                 rs.getInt("adres_id"),
                 rs.getString("straat"),
                 rs.getString("huisnummer"),
                 rs.getString("postcode"),
                 rs.getString("woonplaats"),
-                rs.getInt("reiziger_id")
+                rs.getInt("reiziger_id"),
+                null
             );
+
+//            Reiziger reiziger = rdao.findByidNoAdres( rs.getInt("reiziger_id") );
+//            reiziger.setAdresObj(adres);
+//            adres.setReiziger(reiziger);
+
+            return adres;
 
         } catch(Exception err) {
             System.err.println("AdresDAOsql geeft een error in save(): " + err.getMessage() );
-            return new Adres(0, "", "", "", "", 0);
+            return new Adres(0, "", "", "", "", 0, null);
         }
-    };
+    }
 
     public List<Adres> findAll() {
         List<Adres> adresArray = new ArrayList<>();
@@ -103,8 +122,14 @@ public class AdresDAOPsql implements AdresDAO {
                     rs.getString("huisnummer"),
                     rs.getString("straat"),
                     rs.getString("woonplaats"),
-                    rs.getInt("reiziger_id")
+                    rs.getInt("reiziger_id"),
+                    null
                 );
+
+//                Reiziger reiziger = rdao.findByidNoAdres( rs.getInt("reiziger_id") );
+//                reiziger.setAdresObj(adres);
+//                adres.setReiziger(reiziger);
+
                 adresArray.add(adres);
             }
             rs.close();

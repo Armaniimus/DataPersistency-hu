@@ -7,24 +7,57 @@ public class Adres {
     private String straat;
     private String woonplaats;
     private int    reiziger_id;
+    private Reiziger reizigerObj;
 
-    public Adres (int id, String postcode, String huisnummer, String straat, String woonplaats, int reiziger_id) {
+    public Adres (int id, String postcode, String huisnummer, String straat, String woonplaats, int reiziger_id, Reiziger reizigerObj) {
         this.id = id;
         this.postcode = postcode;
         this.huisnummer = huisnummer;
         this.straat = straat;
         this.woonplaats = woonplaats;
         this.reiziger_id = reiziger_id;
+        this.reizigerObj = reizigerObj;
+        if (reizigerObj != null) {
+            this.reizigerObj.setAdresObj(this);
+        }
+    }
+
+    public void setReiziger(Reiziger reiziger) {
+        this.reizigerObj = reiziger;
+    }
+
+    private String __internalGetInfo() {
+        String adresStr = "";
+        adresStr += this.id + ", ";
+        adresStr += this.straat + ", ";
+        adresStr += this.huisnummer + ", ";
+        adresStr += this.postcode + ", ";
+        adresStr += this.woonplaats + ", ";
+        adresStr += this.reiziger_id;
+
+        return adresStr;
+    }
+
+    public String getInfo() {
+        String adresStr = "{ ";
+        adresStr += this.__internalGetInfo();
+        adresStr += " }";
+
+        return adresStr;
     }
 
     public String toString() {
-        String adresStr = "#";
-        adresStr += this.id + "    ";
-        adresStr += this.straat + " ";
-        adresStr += this.huisnummer + ", ";
-        adresStr += this.postcode + " ";
-        adresStr += this.woonplaats + "    ";
-        adresStr += this.reiziger_id;
+        String adresStr = "Adres{ ";
+        adresStr += this.__internalGetInfo() + ", ";
+
+        if (reizigerObj == null) {
+            adresStr += "NULL";
+        } else {
+            adresStr += "Reiziger" + this.reizigerObj.getInfo();
+        }
+
+
+        adresStr += " }";
 
         return adresStr;
     };

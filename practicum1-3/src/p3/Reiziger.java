@@ -10,13 +10,19 @@ public class Reiziger {
     private String tussenvoegsel;
     private String achternaam;
     private Date geboorteDatum;
+    private Adres adresObj;
 
-    public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboorteDatum) {
+    public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboorteDatum, Adres adres) {
         this.id = id;
         this.voorletters = voorletters;
         this.tussenvoegsel = tussenvoegsel;
         this.achternaam = achternaam;
         this.geboorteDatum = geboorteDatum;
+        this.adresObj = adres;
+
+        if (this.adresObj != null) {
+            this.adresObj.setReiziger(this);
+        }
     }
 
     public String getName() {
@@ -67,14 +73,39 @@ public class Reiziger {
         return geboorteDatum;
     }
 
-    public String toString() {
+    public void setAdresObj(Adres adresObj) {
+        this.adresObj = adresObj;
+    }
+
+    public Adres getAdresObj() {
+        return adresObj;
+    }
+
+    private String __internalGetInfo() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String gDatumStr = dateFormat.format(this.geboorteDatum);
 
         String reizigerStr = "";
-        reizigerStr += this.id + " ";
-        reizigerStr += this.getName() + " ";
+        reizigerStr += this.id + ", ";
+        reizigerStr += this.voorletters + ", ";
+        reizigerStr += this.tussenvoegsel + ", ";
+        reizigerStr += this.achternaam + ", ";
         reizigerStr += gDatumStr;
+        return reizigerStr;
+    }
+
+    public String getInfo() {
+        String reizigerStr = __internalGetInfo();
+        return reizigerStr;
+    }
+
+    public String toString() {
+        String reizigerStr = "Reiziger{ ";
+
+        reizigerStr += __internalGetInfo() + ", Adres";
+        reizigerStr += this.adresObj.getInfo();
+
+        reizigerStr += " }";
 
         return reizigerStr;
     };
