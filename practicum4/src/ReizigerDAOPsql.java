@@ -144,7 +144,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
         } catch(Exception err) {
             System.err.println("ReizigersDAOsql geeft een error in findbyid(): " + err.getMessage() );
-            return new Reiziger(0, "", "", "", Date.valueOf("00-00-0000"), new Adres( 0,"", "", "", "", 0, null) );
+            return null;
         }
     }
 

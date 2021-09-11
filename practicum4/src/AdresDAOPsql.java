@@ -90,7 +90,7 @@ public class AdresDAOPsql implements AdresDAO {
 
         } catch(Exception err) {
             System.err.println("AdresDAOsql geeft een error in findByReiziger(): " + err.getMessage() );
-            return new Adres(0, "", "", "", "", 0, null);
+            return null;
         }
     };
 
