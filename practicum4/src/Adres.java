@@ -33,11 +33,7 @@ public class Adres {
     }
 
     public String getInfo() {
-        String adresStr = "{ ";
-        adresStr += this.__internalGetInfo();
-        adresStr += " }";
-
-        return adresStr;
+        return  "{ " + this.__internalGetInfo() + " }";
     }
 
     public String toString() {

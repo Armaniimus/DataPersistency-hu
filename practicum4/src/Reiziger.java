@@ -47,8 +47,7 @@ public class Reiziger {
     }
 
     public String getInfo() {
-        String reizigerStr = __internalGetInfo();
-        return reizigerStr;
+        return  "{ " + this.__internalGetInfo() + " }";
     }
 
     private String __internalGetInfo() {

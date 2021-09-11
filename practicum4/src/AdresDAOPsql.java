@@ -75,8 +75,8 @@ public class AdresDAOPsql implements AdresDAO {
             pst.setInt(1, reiziger.getId() );
             ResultSet rs = pst.executeQuery();
 
-            rs.next();
-            Adres adres = new Adres(
+            if (rs.next() ) {
+                Adres adres = new Adres(
                     rs.getInt("adres_id"),
                     rs.getString("straat"),
                     rs.getString("huisnummer"),
@@ -84,9 +84,11 @@ public class AdresDAOPsql implements AdresDAO {
                     rs.getString("woonplaats"),
                     rs.getInt("reiziger_id"),
                     reiziger
-            );
-
-            return adres;
+                );
+                return adres;
+            } else {
+                return null;
+            }
 
         } catch(Exception err) {
             System.err.println("AdresDAOsql geeft een error in findByReiziger(): " + err.getMessage() );

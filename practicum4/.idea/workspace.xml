@@ -17,7 +17,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="ADD_SUFFIX_TO_CHERRY_PICKS_OF_PUBLISHED_COMMITS" value="false" />
+    <option name="PREVIEW_PUSH_ON_COMMIT_AND_PUSH" value="false" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="WARN_ABOUT_CRLF" value="false" />
+    <option name="WARN_ABOUT_DETACHED_HEAD" value="false" />
   </component>
   <component name="ProjectId" id="1xzfrkjUz46oBJUo8sb2Mz9YPUx" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -33,6 +37,7 @@
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.27983105" />
     <property name="project.structure.side.proportion" value="0.15128595" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -56,11 +61,18 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1631363039545</updated>
-      <workItem from="1631363040766" duration="4201000" />
+      <workItem from="1631363040766" duration="4807000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="PERFORM_UPDATE_IN_BACKGROUND" value="false" />
+    <option name="PERFORM_COMMIT_IN_BACKGROUND" value="false" />
+    <option name="PERFORM_EDIT_IN_BACKGROUND" value="false" />
+    <option name="PERFORM_CHECKOUT_IN_BACKGROUND" value="false" />
+    <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="false" />
   </component>
 </project>
