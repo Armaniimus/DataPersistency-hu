@@ -1,5 +1,3 @@
-package p3;
-
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -15,7 +13,7 @@ public class Main {
         Connection localConn = getConnection();
         adao = new AdresDAOPsql(localConn);
         rdao = new ReizigerDAOPsql(localConn, adao);
-        adao.connectRDAO(rdao);
+        adao.setRdao(rdao);
 
         try {
             testReizigerDAO();
@@ -102,7 +100,7 @@ public class Main {
 
         // FindById reiziger
         System.out.println("[Test] findByID id 4 wordt gezocht");
-        Reiziger reizigerVier = rdao.findbyid(4);
+        Reiziger reizigerVier = rdao.findById(4);
         System.out.println(reizigerVier);
         System.out.println();
 
@@ -116,9 +114,8 @@ public class Main {
         System.out.println();
 
     }
-
     private static void testAdresDAO() throws SQLException {
-        if (rdao.findbyid(6) == null) {
+        if (rdao.findById(6) == null) {
             String gbdatum2 = "1981-03-14";
             Reiziger test = new Reiziger(6, "t", "est", " voor adres", Date.valueOf(gbdatum2), null);
             rdao.save(test);
@@ -165,8 +162,12 @@ public class Main {
         // FindByreiziger reiziger
         System.out.println("[Test] findByReiziger reiziger met id 1 wordt gezocht");
 
-        Adres gevondenAdres = adao.findByReiziger( rdao.findbyid(1) );
+        Adres gevondenAdres = adao.findByReiziger( rdao.findById(1) );
         System.out.println(gevondenAdres);
         System.out.println();
+    }
+
+    private static void testOvchipkaartDAO() throws SQLException {
+
     }
 }

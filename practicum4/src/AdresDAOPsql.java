@@ -1,5 +1,3 @@
-package p3;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +10,7 @@ public class AdresDAOPsql implements AdresDAO {
         this.conn = localConn;
     }
 
-    public void connectRDAO(ReizigerDAOPsql rdao) {
+    public void setRdao(ReizigerDAOPsql rdao) {
         this.rdao = rdao;
     }
 
@@ -96,33 +94,6 @@ public class AdresDAOPsql implements AdresDAO {
         }
     };
 
-    public Adres findByReizigerId(int id) {
-        try {
-            String q = "SELECT * FROM Adres WHERE reiziger_id = ?";
-            PreparedStatement pst = this.conn.prepareStatement(q);
-            pst.setInt(1, id );
-
-            ResultSet rs = pst.executeQuery();
-            if ( rs.next() ) {
-                return new Adres(
-                    rs.getInt("adres_id"),
-                    rs.getString("straat"),
-                    rs.getString("huisnummer"),
-                    rs.getString("postcode"),
-                    rs.getString("woonplaats"),
-                    rs.getInt("reiziger_id"),
-                    null
-                );
-            } else {
-                return null;
-            }
-
-        } catch(Exception err) {
-            System.err.println("AdresDAOsql geeft een error in findByReizigerId(): " + err.getMessage() );
-            return new Adres(0, "", "", "", "", 0, null);
-        }
-    }
-
     public List<Adres> findAll() {
         List<Adres> adresArray = new ArrayList<>();
         try {
@@ -130,8 +101,6 @@ public class AdresDAOPsql implements AdresDAO {
             ResultSet rs = st.executeQuery("select * from adres");
 
             while (rs.next()) {
-                Reiziger reiziger = rdao.findByidNoAdres( rs.getInt("reiziger_id") );
-
                 Adres adres = new Adres(
                     rs.getInt("adres_id"),
                     rs.getString("postcode"),
@@ -139,8 +108,11 @@ public class AdresDAOPsql implements AdresDAO {
                     rs.getString("straat"),
                     rs.getString("woonplaats"),
                     rs.getInt("reiziger_id"),
-                    reiziger
+                    null
                 );
+
+                Reiziger reiziger = rdao.findByAdres( adres );
+                adres.setReiziger(reiziger);
 
                 adresArray.add(adres);
             }

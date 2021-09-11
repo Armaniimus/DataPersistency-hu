@@ -1,5 +1,3 @@
-package p3;
-
 public class Adres {
     private int    id;
     private String postcode;
