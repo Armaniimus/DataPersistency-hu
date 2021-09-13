@@ -45,7 +45,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         try {
 
         } catch(Exception err) {
-            System.err.println("OVCHiplaartDAOPsql geeft een error in findAll(): " + err.getMessage() );
+            System.err.println("OVCHiplaartDAOPsql geeft een error in findAll(): " + err.getMessage() + " " + err.getStackTrace() );
         }
 
         return OVChipkaartArray;

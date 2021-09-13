@@ -44,7 +44,14 @@
       <recent name="C:\xampp\htdocs\DataPersistency-hu\practicum4\src" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.HashMapTest">
+    <configuration name="HashMapTest" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="HashMapTest" />
+      <module name="practicum4" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="main" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="practicum4" />
@@ -52,6 +59,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.main" />
+      <item itemvalue="Application.HashMapTest" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -61,7 +72,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1631363039545</updated>
-      <workItem from="1631363040766" duration="4807000" />
+      <workItem from="1631363040766" duration="8555000" />
     </task>
     <servers />
   </component>
