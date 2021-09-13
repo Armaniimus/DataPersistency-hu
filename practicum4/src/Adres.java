@@ -49,7 +49,7 @@ public class Adres {
         adresStr += " }";
 
         return adresStr;
-    };
+    }
 
     public int getId() {
         return id;

@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class AdresDAOPsql implements AdresDAO {
@@ -102,7 +103,7 @@ public class AdresDAOPsql implements AdresDAO {
             Statement st = this.conn.createStatement();
             ResultSet rs = st.executeQuery("select * from adres");
 
-            while (rs.next()) {
+            while ( rs.next() ) {
                 Adres adres = new Adres(
                     rs.getInt("adres_id"),
                     rs.getString("postcode"),
