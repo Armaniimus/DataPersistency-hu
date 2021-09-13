@@ -8,11 +8,13 @@ public class Main {
     private static Connection connection;
     private static AdresDAOPsql adao;
     private static ReizigerDAOPsql rdao;
+    private static OVChipkaartDAOPsql odao;
 
     public static void main(String[] args) {
         Connection localConn = getConnection();
         adao = new AdresDAOPsql(localConn);
         rdao = new ReizigerDAOPsql(localConn, adao);
+        odao = new OVChipkaartDAOPsql(localConn);
         adao.setRdao(rdao);
 
         try {
@@ -25,6 +27,12 @@ public class Main {
             testAdresDAO();
         }  catch(Exception err) {
             System.err.println("error in testAdresDAO " + err.getMessage() );
+        }
+
+        try {
+            testOvchipkaartDAO();
+        }  catch(Exception err) {
+            System.err.println("error in testOVChipkaartDAO " + err.getMessage() );
         }
 
         closeConnection();
@@ -168,6 +176,50 @@ public class Main {
     }
 
     private static void testOvchipkaartDAO() throws SQLException {
+        System.out.println("\n---------- Test OvchipkaartDAO -------------");
 
+        // Haal alle reizigers op uit de database
+        List<OVChipkaart> OVChipkaarten = odao.findAll();
+        System.out.println("[Test] OVChipkaartDAO.findAll() geeft de volgende adressen:");
+        for (OVChipkaart o : OVChipkaarten) {
+            System.out.println(o);
+        }
+        System.out.println();
+
+        // Maak een nieuwe Adres aan en persisteer deze in de database
+        OVChipkaart newOv = new OVChipkaart();
+        System.out.print("[Test] Eerst " + OVChipkaarten.size() + " ovChipkaarten, na OVchipkaartDAO.save() ");
+        odao.save(newOv);
+        OVChipkaarten = odao.findAll();
+        System.out.println(OVChipkaarten.size() + " ovChipkaarten\n");
+
+        // update adres
+        System.out.println("[Test] before update:" + newOv);
+//        newOv.setWoonplaats("Utrecht");
+//        newOv.setPostcode("Qwerty");
+        odao.update(newOv);
+
+        System.out.print("[Test] after update:");
+        OVChipkaarten = odao.findAll();
+        System.out.println(" OVChipkaartDAO.findAll() geeft de volgende OVChipkaarten:");
+        for (OVChipkaart o : OVChipkaarten) {
+            System.out.println(o);
+        }
+        System.out.println();
+
+        // Delete adres
+        System.out.print("[Test] Eerst " + OVChipkaarten.size() + " OVchipkaarten, na OVChipkaartDAO.delete() ");
+        odao.delete(newOv);
+        OVChipkaarten = odao.findAll();
+        System.out.println(OVChipkaarten.size() + " Ovchipkaarten");
+        System.out.println();
+
+        // FindByreiziger reiziger
+        System.out.println("[Test] findByReiziger reiziger met id 1 wordt gezocht");
+
+        List<OVChipkaart> OVChipkaarten2 = odao.findByReiziger( rdao.findById(1) );
+        for (OVChipkaart o : OVChipkaarten2) {
+            System.out.println(o);
+        }
     }
 }
