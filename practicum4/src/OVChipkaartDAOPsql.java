@@ -1,7 +1,14 @@
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OVChipkaartDAOPsql implements OVChipkaartDAO {
+    private Connection connection;
+
+    public OVChipkaartDAOPsql(Connection localConn) {
+        this.connection = localConn;
+    }
+
     public boolean save(OVChipkaart ovChipkaart) {
         try {
             return false;
@@ -45,7 +52,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         try {
 
         } catch(Exception err) {
-            System.err.println("OVCHiplaartDAOPsql geeft een error in findAll(): " + err.getMessage() );
+            System.err.println("OVChiplaartDAOPsql geeft een error in findAll(): " + err.getMessage() );
         }
 
         return OVChipkaartArray;
