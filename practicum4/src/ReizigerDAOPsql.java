@@ -5,10 +5,12 @@ import java.util.List;
 public class ReizigerDAOPsql implements ReizigerDAO {
     private Connection conn;
     private AdresDAOPsql adao;
+    private OVChipkaartDAO odao;
 
-    public ReizigerDAOPsql(Connection connection, AdresDAOPsql localAdao) {
+    public ReizigerDAOPsql(Connection connection, AdresDAOPsql localAdao, OVChipkaartDAO localOdao) {
         this.conn = connection;
-        adao = localAdao;
+        this.adao = localAdao;
+        this.odao = localOdao;
     }
 
     public boolean save(Reiziger reiziger) {
@@ -69,14 +71,14 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         int id = adres.getReizigerId();
         Reiziger reiziger = this.__findById(id);
         reiziger.setAdres(adres);
+        reiziger = this.__addOvchipkaartRelation(reiziger);
 
         return reiziger;
     }
 
     public Reiziger findByOVChipkaart(OVChipkaart ovChipkaart){
         int id = ovChipkaart.getReizigerId();
-        Reiziger reiziger = this.__findById(id);
-//        reiziger.setOv(ovChipkaart);
+        Reiziger reiziger = this.__findByIdWithRelations(id);
 
         return reiziger;
     }
@@ -128,8 +130,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                         rs.getDate("geboorteDatum"),
                         null
                 );
-                Adres adres = adao.findByReiziger( reiziger );
-                reiziger.setAdres( adres );
+                reiziger = this.__addRelations(reiziger);
 
                 reizigersArray.add(reiziger);
             }
@@ -147,9 +148,25 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     }
 
     private Reiziger __addRelations(Reiziger reiziger) {
+        reiziger = this.__addAdresRelation(reiziger);
+        reiziger = this.__addOvchipkaartRelation(reiziger);
+
+        return reiziger;
+    }
+
+    private Reiziger __addAdresRelation(Reiziger reiziger) {
         Adres adres = adao.findByReiziger( reiziger );
         if (adres != null) {
             reiziger.setAdres(adres);
+        }
+
+        return reiziger;
+    }
+
+    private Reiziger __addOvchipkaartRelation(Reiziger reiziger) {
+        List<OVChipkaart> ovChipkaarten = odao.findByReiziger( reiziger );
+        if (!ovChipkaarten.isEmpty()) {
+            reiziger.setOvChipkaartList(ovChipkaarten);
         }
 
         return reiziger;
