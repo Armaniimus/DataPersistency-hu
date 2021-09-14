@@ -73,9 +73,13 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         return reiziger;
     }
 
-//    public Reiziger findByOVChipkaart(int id){
-//
-//    }
+    public Reiziger findByOVChipkaart(OVChipkaart ovChipkaart){
+        int id = ovChipkaart.getReizigerId();
+        Reiziger reiziger = this.__findById(id);
+//        reiziger.setOv(ovChipkaart);
+
+        return reiziger;
+    }
 
     public List<Reiziger> findByGBdatum(String datum) {
         List<Reiziger> reizigersArray = new ArrayList<>();
