@@ -4,16 +4,16 @@ public class Adres {
     private String huisnummer;
     private String straat;
     private String woonplaats;
-    private int    reiziger_id;
+    private int    reizigerId;
     private Reiziger reizigerObj;
 
-    public Adres (int id, String postcode, String huisnummer, String straat, String woonplaats, int reiziger_id, Reiziger reizigerObj) {
+    public Adres (int id, String postcode, String huisnummer, String straat, String woonplaats, int reizigerId, Reiziger reizigerObj) {
         this.id = id;
         this.postcode = postcode;
         this.huisnummer = huisnummer;
         this.straat = straat;
         this.woonplaats = woonplaats;
-        this.reiziger_id = reiziger_id;
+        this.reizigerId = reizigerId;
         this.reizigerObj = reizigerObj;
         if (reizigerObj != null) {
             this.reizigerObj.setAdres(this);
@@ -27,7 +27,7 @@ public class Adres {
         adresStr += this.huisnummer + ", ";
         adresStr += this.postcode + ", ";
         adresStr += this.woonplaats + ", ";
-        adresStr += this.reiziger_id;
+        adresStr += this.reizigerId;
 
         return adresStr;
     }
@@ -81,11 +81,11 @@ public class Adres {
     public void setPostcode(String postcode) {
         this.postcode = postcode;
     }
-    public int getReiziger_id() {
-        return reiziger_id;
+    public int getReizigerId() {
+        return reizigerId;
     }
-    public void setReiziger_id(int reiziger_id) {
-        this.reiziger_id = reiziger_id;
+    public void setReizigerId(int reiziger_id) {
+        this.reizigerId = reiziger_id;
     }
     public Reiziger getReiziger() {
         return reizigerObj;

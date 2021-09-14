@@ -66,7 +66,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     }
 
     public Reiziger findByAdres(Adres adres){
-        int id = adres.getReiziger_id();
+        int id = adres.getReizigerId();
         Reiziger reiziger = this.__findById(id);
         reiziger.setAdres(adres);
 

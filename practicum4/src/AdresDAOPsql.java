@@ -24,7 +24,7 @@ public class AdresDAOPsql implements AdresDAO {
             pst.setString(3, adres.getHuisnummer() );
             pst.setString(4, adres.getStraat() );
             pst.setString(5, adres.getWoonplaats() );
-            pst.setInt(6,    adres.getReiziger_id() );
+            pst.setInt(6,    adres.getReizigerId() );
 
             pst.execute();
             return true;
@@ -44,7 +44,7 @@ public class AdresDAOPsql implements AdresDAO {
             pst.setString(2, adres.getHuisnummer() );
             pst.setString(3, adres.getStraat() );
             pst.setString(4, adres.getWoonplaats() );
-            pst.setInt(5,    adres.getReiziger_id() );
+            pst.setInt(5,    adres.getReizigerId() );
             pst.setInt(6,    adres.getId() );
 
             pst.execute();
