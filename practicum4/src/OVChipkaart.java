@@ -29,7 +29,7 @@ public class OVChipkaart {
         if (this.reizigerObj != null) {
             string += "Reiziger" + this.reizigerObj.getInfo();
         } else {
-            string += ", null";
+            string += "null";
         }
 
         string += " }";
@@ -46,10 +46,10 @@ public class OVChipkaart {
 
         String string = "";
         string += this.kaartNummer  + ", ";
-        string += geldigTotStr;
+        string += geldigTotStr + ", ";
         string += this.klasse + ", ";
         string += this.saldo + ", ";
-        string += this.reizigerId + ", ";
+        string += this.reizigerId;
 
         return string;
     }
