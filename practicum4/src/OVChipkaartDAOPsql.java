@@ -29,13 +29,15 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
 
     public boolean update(OVChipkaart ovChipkaart) {
         try {
-            String q = "UPDATE ov_chipkaart SET geldig_tot=?, klasse=?, saldo=?, reiziger_id=? WHERE kaartnummer=?;";
+            String q = "UPDATE ov_chipkaart SET geldig_tot=?, klasse=?, saldo=?, reiziger_id=? WHERE kaart_nummer=?;";
             PreparedStatement pst = this.conn.prepareStatement(q);
             pst.setDate(1,  new Date(ovChipkaart.getGeldigTot().getTime() ) );
             pst.setInt(2, ovChipkaart.getKlasse() );
             pst.setDouble(3, ovChipkaart.getSaldo() );
             pst.setInt(4, ovChipkaart.getReizigerId() );
             pst.setInt(5, ovChipkaart.getKaartNummer() );
+
+            pst.execute();
             return true;
         } catch(Exception err) {
             System.err.println("OVCHiplaartDAOPsql geeft een error in update(): " + err.getMessage() );
