@@ -108,6 +108,35 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         }
     };
 
+    public List<Reiziger> findAll() {
+        List<Reiziger> reizigersArray = new ArrayList<>();
+
+        try {
+            Statement st = this.conn.createStatement();
+            ResultSet rs = st.executeQuery("select * from reiziger");
+
+            while (rs.next()) {
+                Reiziger reiziger = new Reiziger(
+                        rs.getInt("reiziger_id"),
+                        rs.getString("voorletters"),
+                        rs.getString("tussenvoegsel"),
+                        rs.getString("achternaam"),
+                        rs.getDate("geboorteDatum"),
+                        null
+                );
+                Adres adres = adao.findByReiziger( reiziger );
+                reiziger.setAdres( adres );
+
+                reizigersArray.add(reiziger);
+            }
+            rs.close();
+        } catch (Exception err) {
+            System.err.println("ReizigersDAOsql geeft een error in findAll(): " + err.getMessage() );
+        }
+
+        return reizigersArray;
+    };
+
     private Reiziger __findByIdWithRelations(int id) {
         Reiziger reiziger = this.__findById(id);
         return this.__addRelations(reiziger);
@@ -147,33 +176,4 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             return null;
         }
     }
-
-    public List<Reiziger> findAll() {
-        List<Reiziger> reizigersArray = new ArrayList<>();
-
-        try {
-            Statement st = this.conn.createStatement();
-            ResultSet rs = st.executeQuery("select * from reiziger");
-
-            while (rs.next()) {
-                Reiziger reiziger = new Reiziger(
-                    rs.getInt("reiziger_id"),
-                    rs.getString("voorletters"),
-                    rs.getString("tussenvoegsel"),
-                    rs.getString("achternaam"),
-                    rs.getDate("geboorteDatum"),
-                    null
-                );
-                Adres adres = adao.findByReiziger( reiziger );
-                reiziger.setAdres( adres );
-
-                reizigersArray.add(reiziger);
-            }
-            rs.close();
-        } catch (Exception err) {
-            System.err.println("ReizigersDAOsql geeft een error in findAll(): " + err.getMessage() );
-        }
-
-        return reizigersArray;
-    };
 }
