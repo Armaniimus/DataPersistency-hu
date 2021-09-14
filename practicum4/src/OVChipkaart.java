@@ -10,7 +10,7 @@ public class OVChipkaart {
     private int reizigerId;
     private Reiziger reizigerObj;
 
-    public OVChipkaart(int kaartNummer, Date geldigTot, int klasse, Double saldo, int reizigerId, Reiziger reiziger) {
+    public OVChipkaart(int kaartNummer, Date geldigTot, int klasse, Double saldo, int reizigerId, Reiziger reizigerObj) {
         this.kaartNummer = kaartNummer;
         this.geldigTot = geldigTot;
         this.klasse = klasse;
@@ -18,7 +18,7 @@ public class OVChipkaart {
         this.reizigerId = reizigerId;
 
         if (reizigerObj != null) {
-            reizigerObj = reiziger;
+            this.reizigerObj = reizigerObj;
         }
     }
 
