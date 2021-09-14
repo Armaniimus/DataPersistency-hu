@@ -1,12 +1,2 @@
-practicum4/out/production
-practicum4/out/production/
-practicum4/out/production/*
-practicum4/out/production/**
-practicum4/out/production/practicum4/AdresDAOPsql.class
-practicum4/out/production/practicum4/Adres.class
-practicum4/out/production/practicum4/HashMapTest.class
-practicum4/out/production/practicum4/Main.class
-practicum4/out/production/practicum4/OVChipkaart.class
-practicum4/out/production/practicum4/OVChipkaartDAOPsql.class
-practicum4/out/production/practicum4/ReizigerDAOPsql.class
+practicum4/out
 practicum4/.idea/workspace.xml
