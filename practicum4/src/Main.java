@@ -13,27 +13,16 @@ public class Main {
     public static void main(String[] args) {
         Connection localConn = getConnection();
         adao = new AdresDAOPsql(localConn);
-        rdao = new ReizigerDAOPsql(localConn, adao);
         odao = new OVChipkaartDAOPsql(localConn);
+
+        rdao = new ReizigerDAOPsql(localConn, adao);
+
+        odao.setRdao(rdao);
         adao.setRdao(rdao);
 
-        try {
-            testReizigerDAO();
-        }  catch(Exception err) {
-            System.err.println("error in testReizigersDAO " + err.getMessage() );
-        }
-
-        try {
-            testAdresDAO();
-        }  catch(Exception err) {
-            System.err.println("error in testAdresDAO " + err.getMessage() );
-        }
-
-        try {
-            testOvchipkaartDAO();
-        }  catch(Exception err) {
-            System.err.println("error in testOVChipkaartDAO " + err.getMessage() );
-        }
+//        testReizigerDAO();
+//        testAdresDAO();
+        testOvchipkaartDAO();
 
         closeConnection();
     }
@@ -66,7 +55,7 @@ public class Main {
      *
      * @throws SQLException
      */
-    private static void testReizigerDAO() throws SQLException {
+    private static void testReizigerDAO() {
         System.out.println("\n---------- Test ReizigerDAO -------------");
 
         // Haal alle reizigers op uit de database
@@ -122,7 +111,7 @@ public class Main {
         System.out.println();
 
     }
-    private static void testAdresDAO() throws SQLException {
+    private static void testAdresDAO() {
         if (rdao.findById(6) == null) {
             String gbdatum2 = "1981-03-14";
             Reiziger test = new Reiziger(6, "t", "est", " voor adres", Date.valueOf(gbdatum2), null);
@@ -175,19 +164,19 @@ public class Main {
         System.out.println();
     }
 
-    private static void testOvchipkaartDAO() throws SQLException {
+    private static void testOvchipkaartDAO() {
         System.out.println("\n---------- Test OvchipkaartDAO -------------");
 
         // Haal alle reizigers op uit de database
         List<OVChipkaart> OVChipkaarten = odao.findAll();
-        System.out.println("[Test] OVChipkaartDAO.findAll() geeft de volgende adressen:");
+        System.out.println("[Test] OVChipkaartDAO.findAll() geeft de volgende Ovchipkaarten:");
         for (OVChipkaart o : OVChipkaarten) {
             System.out.println(o);
         }
         System.out.println();
 
         // Maak een nieuwe Adres aan en persisteer deze in de database
-        OVChipkaart newOv = new OVChipkaart();
+        OVChipkaart newOv = new OVChipkaart(0,Date.valueOf("2022-12-01"), 1, 25.50, 2, null );
         System.out.print("[Test] Eerst " + OVChipkaarten.size() + " ovChipkaarten, na OVchipkaartDAO.save() ");
         odao.save(newOv);
         OVChipkaarten = odao.findAll();
