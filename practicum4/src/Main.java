@@ -15,13 +15,13 @@ public class Main {
         adao = new AdresDAOPsql(localConn);
         odao = new OVChipkaartDAOPsql(localConn);
 
-        rdao = new ReizigerDAOPsql(localConn, adao);
+        rdao = new ReizigerDAOPsql(localConn, adao, odao);
 
         odao.setRdao(rdao);
         adao.setRdao(rdao);
 
-//        testReizigerDAO();
-//        testAdresDAO();
+        testReizigerDAO();
+        testAdresDAO();
         testOvchipkaartDAO();
 
         closeConnection();
@@ -184,8 +184,8 @@ public class Main {
 
         // update adres
         System.out.println("[Test] before update:" + newOv);
-//        newOv.setWoonplaats("Utrecht");
-//        newOv.setPostcode("Qwerty");
+        newOv.setKlasse(4);
+        newOv.setSaldo(500.00);
         odao.update(newOv);
 
         System.out.print("[Test] after update:");
@@ -207,6 +207,14 @@ public class Main {
         System.out.println("[Test] findByReiziger reiziger met id 1 wordt gezocht");
 
         List<OVChipkaart> OVChipkaarten2 = odao.findByReiziger( rdao.findById(1) );
+        for (OVChipkaart o : OVChipkaarten2) {
+            System.out.println(o);
+        }
+
+        // FindByreiziger reiziger
+        System.out.println("[Test] findByReiziger reiziger met id 2 wordt gezocht");
+
+        OVChipkaarten2 = odao.findByReiziger( rdao.findById(2) );
         for (OVChipkaart o : OVChipkaarten2) {
             System.out.println(o);
         }
