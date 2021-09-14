@@ -1,6 +1,7 @@
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class Reiziger {
     private int id;
@@ -9,6 +10,7 @@ public class Reiziger {
     private String achternaam;
     private Date geboorteDatum;
     private Adres adresObj;
+    private List<OVChipkaart> OvChipkaartList;
 
     public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboorteDatum, Adres adres) {
         this.id = id;
@@ -32,18 +34,35 @@ public class Reiziger {
     }
 
     public String toString() {
-        String reizigerStr = "Reiziger{ ";
+        String AdresObjString = "";
 
-        reizigerStr += __internalGetInfo() + ", ";
         if (this.adresObj != null) {
-            reizigerStr += "Adres" + this.adresObj.getInfo();
+            AdresObjString += "Adres" + this.adresObj.getInfo();
         } else {
-            reizigerStr += ", null";
+            AdresObjString += "null";
         }
 
-        reizigerStr += " }";
+        String OvChipkaartListString = "";
+        if (this.OvChipkaartList != null && !this.OvChipkaartList.isEmpty()) {
+            OvChipkaartListString += "OvChipkaartenList[";
+            for (int i=0; i <this.OvChipkaartList.size(); i++) {
+                if (i > 1) {
+                    OvChipkaartListString += ", ";
+                }
+                OvChipkaartListString += " OvChipkaart" + this.OvChipkaartList.get(i).getInfo();
+            }
+            OvChipkaartListString += " ]";
+        } else {
+            OvChipkaartListString = "null";
+        }
 
-        return reizigerStr;
+        String resultString = "Reiziger{ ";
+        resultString += __internalGetInfo() + ", ";
+        resultString += AdresObjString + ", ";
+        resultString += OvChipkaartListString;
+        resultString += " }";
+
+        return resultString;
     }
 
     public String getInfo() {
@@ -66,7 +85,6 @@ public class Reiziger {
     public int getId() {
         return this.id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -74,7 +92,6 @@ public class Reiziger {
     public void setVoorletters(String voorletters) {
         this.voorletters = voorletters;
     }
-
     public String getVoorletters() {
         return voorletters;
     }
@@ -82,7 +99,6 @@ public class Reiziger {
     public void setTussenvoegsel(String tussenvoegsel) {
         this.tussenvoegsel = tussenvoegsel;
     }
-
     public String getTussenvoegsel() {
         return tussenvoegsel;
     }
@@ -90,7 +106,6 @@ public class Reiziger {
     public void setAchternaam(String achternaam) {
         this.achternaam = achternaam;
     }
-
     public String getAchternaam() {
         return achternaam;
     }
@@ -98,7 +113,6 @@ public class Reiziger {
     public void setGeboorteDatum(Date geboorteDatum) {
         this.geboorteDatum = geboorteDatum;
     }
-
     public Date getGeboorteDatum() {
         return geboorteDatum;
     }
@@ -106,9 +120,10 @@ public class Reiziger {
     public void setAdres(Adres adresObj) {
         this.adresObj = adresObj;
     }
-
     public Adres getAdres() {
         return adresObj;
     }
 
+    public void setOvChipkaartList(List<OVChipkaart> ovChipkaartList) { this.OvChipkaartList = ovChipkaartList;}
+    public List<OVChipkaart> getOvChipkaartList() {return this.OvChipkaartList;}
 }
