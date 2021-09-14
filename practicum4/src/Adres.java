@@ -51,46 +51,24 @@ public class Adres {
         return adresStr;
     }
 
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
-    public String getStraat() {
-        return straat;
-    }
-    public void setStraat(String straat) {
-        this.straat = straat;
-    }
-    public String getHuisnummer() {
-        return huisnummer;
-    }
-    public void setHuisnummer(String huisnummer) {
-        this.huisnummer = huisnummer;
-    }
-    public String getWoonplaats() {
-        return woonplaats;
-    }
-    public void setWoonplaats(String woonplaats) {
-        this.woonplaats = woonplaats;
-    }
-    public String getPostcode() {
-        return postcode;
-    }
-    public void setPostcode(String postcode) {
-        this.postcode = postcode;
-    }
-    public int getReizigerId() {
-        return reizigerId;
-    }
-    public void setReizigerId(int reiziger_id) {
-        this.reizigerId = reiziger_id;
-    }
-    public Reiziger getReiziger() {
-        return reizigerObj;
-    }
-    public void setReiziger(Reiziger reiziger) {
-        this.reizigerObj = reiziger;
-    }
+    public int getId() {return id;}
+    public void setId(int id) {this.id = id;}
+
+    public String getStraat() {return straat;}
+    public void setStraat(String straat) {this.straat = straat;}
+
+    public String getHuisnummer() {return huisnummer;}
+    public void setHuisnummer(String huisnummer) {this.huisnummer = huisnummer;}
+
+    public String getWoonplaats() {return woonplaats;}
+    public void setWoonplaats(String woonplaats) {this.woonplaats = woonplaats;}
+
+    public String getPostcode() {return postcode;}
+    public void setPostcode(String postcode) {this.postcode = postcode;}
+
+    public int getReizigerId() {return this.reizigerId;}
+    public void setReizigerId(int reizigerId) {this.reizigerId = reizigerId;}
+
+    public Reiziger getReiziger() {return this.reizigerObj;}
+    public void setReiziger(Reiziger reiziger) {this.reizigerObj = reiziger;}
 }
