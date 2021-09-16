@@ -3,20 +3,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReizigerDAOPsql implements ReizigerDAO {
-    private Connection conn;
-    private AdresDAOPsql adao;
-    private OVChipkaartDAO odao;
+    private Connection connection;
+    private AdresDAOPsql adresDAO;
+    private OVChipkaartDAO ovChipkaartDAO;
 
     public ReizigerDAOPsql(Connection connection, AdresDAOPsql localAdao, OVChipkaartDAO localOdao) {
-        this.conn = connection;
-        this.adao = localAdao;
-        this.odao = localOdao;
+        this.connection = connection;
+        this.adresDAO = localAdao;
+        this.ovChipkaartDAO = localOdao;
     }
 
     public boolean save(Reiziger reiziger) {
         try {
             String q = "INSERT INTO reiziger (reiziger_id, voorletters, tussenvoegsel, achternaam, geboorteDatum) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement pst = this.conn.prepareStatement(q);
+            PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1, reiziger.getId() );
             pst.setString(2, reiziger.getVoorletters() );
             pst.setString(3, reiziger.getTussenvoegsel() );
@@ -35,7 +35,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     public boolean update(Reiziger reiziger) {
         try {
             String q = "UPDATE reiziger SET voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboorteDatum = ? WHERE reiziger_id=?";
-            PreparedStatement pst = this.conn.prepareStatement(q);
+            PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setString(1, reiziger.getVoorletters() );
             pst.setString(2, reiziger.getTussenvoegsel() );
             pst.setString(3, reiziger.getAchternaam() );
@@ -53,8 +53,26 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     public boolean delete(Reiziger reiziger) {
         try {
+            //make sure all relations are set
+            reiziger = this.__addRelations( reiziger);
+
+            //load relations in variables
+            List<OVChipkaart> ovList = reiziger.getOvChipkaartList();
+            Adres adres = reiziger.getAdres();
+
+            //delete relations
+            if (ovList != null) {
+                for (int i=0; i<ovList.size(); i++) {
+                    this.ovChipkaartDAO.delete( ovList.get(i) );
+                }
+            }
+            if (adres != null) {
+                this.adresDAO.delete( adres );
+            }
+
+            //delete reiziger
             String q = "DELETE FROM reiziger WHERE reiziger_id = ?";
-            PreparedStatement pst = this.conn.prepareStatement(q);
+            PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1, reiziger.getId() );
             pst.execute();
             pst.close();
@@ -67,21 +85,19 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     };
 
     public Reiziger findById(int id) {
-        return this.__findByIdWithRelations(id);
+        return this.__findById(id, null);
     }
 
     public Reiziger findByAdres(Adres adres){
         int id = adres.getReizigerId();
-        Reiziger reiziger = this.__findById(id);
-        reiziger.setAdres(adres);
-        reiziger = this.__addOvchipkaartRelation(reiziger);
+        Reiziger reiziger = this.__findById(id, adres);
 
         return reiziger;
     }
 
     public Reiziger findByOVChipkaart(OVChipkaart ovChipkaart){
         int id = ovChipkaart.getReizigerId();
-        Reiziger reiziger = this.__findByIdWithRelations(id);
+        Reiziger reiziger = this.__findById(id, null);
 
         return reiziger;
     }
@@ -91,21 +107,12 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
         try {
             String q = "SELECT * FROM reiziger WHERE geboorteDatum = ?";
-            PreparedStatement pst = this.conn.prepareStatement(q);
+            PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setDate(1, Date.valueOf(datum));
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
-                Reiziger reiziger = new Reiziger(
-                    rs.getInt("reiziger_id"),
-                    rs.getString("voorletters"),
-                    rs.getString("tussenvoegsel"),
-                    rs.getString("achternaam"),
-                    rs.getDate("geboorteDatum"),
-                    null
-                );
-                reiziger = this.__addRelations(reiziger);
-
+                Reiziger reiziger =  this.__retrieveResultset(rs, null);
                 reizigersArray.add(reiziger);
             }
 
@@ -114,9 +121,8 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
             return reizigersArray;
         } catch(Exception err) {
-            System.err.println("ReizigersDAOsql geeft een error in findByGbDatum(): " + err.getMessage() );
+            System.err.println("ReizigersDAOsql geeft een error in findByGbDatum(): " + err.getMessage() + " " + err.getStackTrace() );
             return reizigersArray;
-
         }
     };
 
@@ -124,34 +130,20 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         List<Reiziger> reizigersArray = new ArrayList<>();
 
         try {
-            Statement st = this.conn.createStatement();
+            Statement st = this.connection.createStatement();
             ResultSet rs = st.executeQuery("select * from reiziger");
 
             while (rs.next()) {
-                Reiziger reiziger = new Reiziger(
-                        rs.getInt("reiziger_id"),
-                        rs.getString("voorletters"),
-                        rs.getString("tussenvoegsel"),
-                        rs.getString("achternaam"),
-                        rs.getDate("geboorteDatum"),
-                        null
-                );
-                reiziger = this.__addRelations(reiziger);
-
+                Reiziger reiziger = this.__retrieveResultset(rs, null);
                 reizigersArray.add(reiziger);
             }
             rs.close();
         } catch (Exception err) {
-            System.err.println("ReizigersDAOsql geeft een error in findAll(): " + err.getMessage() );
+            System.err.println("ReizigersDAOsql geeft een error in findAll(): " + err.getMessage() + " " + err.getStackTrace() );
         }
 
         return reizigersArray;
     };
-
-    private Reiziger __findByIdWithRelations(int id) {
-        Reiziger reiziger = this.__findById(id);
-        return this.__addRelations(reiziger);
-    }
 
     private Reiziger __addRelations(Reiziger reiziger) {
         reiziger = this.__addAdresRelation(reiziger);
@@ -161,7 +153,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     }
 
     private Reiziger __addAdresRelation(Reiziger reiziger) {
-        Adres adres = adao.findByReiziger( reiziger );
+        Adres adres = adresDAO.findByReiziger( reiziger );
         if (adres != null) {
             reiziger.setAdres(adres);
         }
@@ -170,7 +162,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     }
 
     private Reiziger __addOvchipkaartRelation(Reiziger reiziger) {
-        List<OVChipkaart> ovChipkaarten = odao.findByReiziger( reiziger );
+        List<OVChipkaart> ovChipkaarten = ovChipkaartDAO.findByReiziger( reiziger );
         if (!ovChipkaarten.isEmpty()) {
             reiziger.setOvChipkaartList(ovChipkaarten);
         }
@@ -178,23 +170,16 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         return reiziger;
     }
 
-    private Reiziger __findById(int id) {
+    private Reiziger __findById(int id, Adres adres) {
         try {
-            Reiziger reiziger = null;
             String q = "SELECT * FROM reiziger WHERE reiziger_id = ?";
-            PreparedStatement pst = this.conn.prepareStatement(q);
+            PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1, id );
             ResultSet rs = pst.executeQuery();
 
+            Reiziger reiziger = null;
             if ( rs.next() ) {
-                reiziger = new Reiziger(
-                    rs.getInt("reiziger_id"),
-                    rs.getString("voorletters"),
-                    rs.getString("tussenvoegsel"),
-                    rs.getString("achternaam"),
-                    rs.getDate("geboorteDatum"),
-                    null
-                );
+                reiziger =  this.__retrieveResultset(rs, adres);
             }
 
             pst.close();
@@ -203,8 +188,31 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
 
         } catch(Exception err) {
-            System.err.println("ReizigersDAOsql geeft een error in __findbyid(): " + err.getMessage() );
+            System.err.println("ReizigersDAOsql geeft een error in __findbyid(): " + err.getMessage() + " " + err.getStackTrace() );
             return null;
         }
+    }
+
+    private Reiziger __retrieveResultset(ResultSet rs, Adres adres)  {
+        Reiziger reiziger = null;
+        try {
+            reiziger = new Reiziger(
+                rs.getInt("reiziger_id"),
+                rs.getString("voorletters"),
+                rs.getString("tussenvoegsel"),
+                rs.getString("achternaam"),
+                rs.getDate("geboorteDatum"),
+                null
+            );
+
+            if (adres == null) {
+                this.__addAdresRelation(reiziger);
+            }
+            this.__addOvchipkaartRelation(reiziger);
+
+        } catch (Exception err) {
+            System.err.println("ReizigersDAOsql geeft een error in __retrieveResultSet(): " + err.getMessage() + " " +  err.getStackTrace());
+        }
+        return reiziger;
     }
 }
