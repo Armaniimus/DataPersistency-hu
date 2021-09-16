@@ -69,6 +69,6 @@ public class OVChipkaart {
     public int getReizigerId() {return reizigerId;}
     public void setReizigerId(int reizigerId) {this.reizigerId = reizigerId;}
 
-    public Reiziger getReizigerObj() {return reizigerObj;}
-    public void setReizigerObj(Reiziger reizigerObj) {this.reizigerObj = reizigerObj;}
+    public Reiziger getReiziger() {return reizigerObj;}
+    public void setReiziger(Reiziger reizigerObj) {this.reizigerObj = reizigerObj;}
 }
