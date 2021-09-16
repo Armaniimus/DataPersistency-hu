@@ -20,6 +20,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             pst.setInt(5, ovChipkaart.getReizigerId() );
 
             pst.execute();
+            pst.close();
             return true;
         } catch(Exception err) {
             System.err.println("OVCHiplaartDAOPsql geeft een error in save(): " + err.getMessage() );
@@ -38,6 +39,8 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             pst.setInt(5, ovChipkaart.getKaartNummer() );
 
             pst.execute();
+
+            pst.close();
             return true;
         } catch(Exception err) {
             System.err.println("OVCHiplaartDAOPsql geeft een error in update(): " + err.getMessage() );
@@ -52,6 +55,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             pst.setInt(1, ovChipkaart.getKaartNummer() );
             pst.execute();
 
+            pst.close();
             return true;
         } catch(Exception err) {
             System.err.println("OVCHiplaartDAOPsql geeft een error in delete(): " + err.getMessage() );
@@ -78,6 +82,8 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
                 );
                 OVChipkaartArray.add(ovChipkaart);
             }
+            rs.close();
+            pst.close();
 
         } catch(Exception err) {
             System.err.println("OVCHipkaartDAOPsql geeft een error in findByReiziger(): " + err.getMessage() );
@@ -107,7 +113,6 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
                 OVChipkaartArray.add(ovChipkaart);
             }
             rs.close();
-
 
         } catch(Exception err) {
             System.err.println("OVCHiplaartDAOPsql geeft een error in findAll(): " + err.getMessage() + " " + err.getStackTrace() );

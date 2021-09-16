@@ -1,24 +1,23 @@
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class AdresDAOPsql implements AdresDAO {
-    private Connection conn;
-    private ReizigerDAOPsql rdao;
+    private Connection connection;
+    private ReizigerDAOPsql reizigerDAO;
 
     public AdresDAOPsql(Connection localConn) {
-        this.conn = localConn;
+        this.connection = localConn;
     }
 
-    public void setRdao(ReizigerDAOPsql rdao) {
-        this.rdao = rdao;
+    public void setReizigerDAO(ReizigerDAOPsql reizigerDAO) {
+        this.reizigerDAO = reizigerDAO;
     }
 
     public boolean save(Adres adres) {
         try {
             String q = "INSERT INTO adres (adres_id, postcode, huisnummer, straat, woonplaats, reiziger_id) VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement pst = this.conn.prepareStatement(q);
+            PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1,    adres.getId() );
             pst.setString(2, adres.getPostcode() );
             pst.setString(3, adres.getHuisnummer() );
@@ -27,6 +26,7 @@ public class AdresDAOPsql implements AdresDAO {
             pst.setInt(6,    adres.getReizigerId() );
 
             pst.execute();
+            pst.close();
             return true;
 
         } catch(Exception err) {
@@ -38,7 +38,7 @@ public class AdresDAOPsql implements AdresDAO {
     public boolean update(Adres adres) {
         try {
             String q = "UPDATE Adres SET postcode = ?, huisnummer = ?, straat = ?, woonplaats = ?, reiziger_id = ? WHERE adres_id=?";
-            PreparedStatement pst = this.conn.prepareStatement(q);
+            PreparedStatement pst = this.connection.prepareStatement(q);
 
             pst.setString(1, adres.getPostcode() );
             pst.setString(2, adres.getHuisnummer() );
@@ -48,6 +48,7 @@ public class AdresDAOPsql implements AdresDAO {
             pst.setInt(6,    adres.getId() );
 
             pst.execute();
+            pst.close();
             return true;
         } catch(Exception err) {
             System.err.println("AdresDAOsql geeft een error in update(): " + err.getMessage() );
@@ -58,9 +59,10 @@ public class AdresDAOPsql implements AdresDAO {
     public boolean delete(Adres adres) {
         try {
             String q = "DELETE FROM adres WHERE adres_id = ?";
-            PreparedStatement pst = this.conn.prepareStatement(q);
+            PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1, adres.getId() );
             pst.execute();
+            pst.close();
 
             return true;
         } catch(Exception err) {
@@ -71,13 +73,15 @@ public class AdresDAOPsql implements AdresDAO {
 
     public Adres findByReiziger(Reiziger reiziger) {
         try {
+            Adres adres = null;
+
             String q = "SELECT * FROM Adres WHERE reiziger_id = ?";
-            PreparedStatement pst = this.conn.prepareStatement(q);
+            PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1, reiziger.getId() );
             ResultSet rs = pst.executeQuery();
 
             if (rs.next() ) {
-                Adres adres = new Adres(
+                adres = new Adres(
                     rs.getInt("adres_id"),
                     rs.getString("straat"),
                     rs.getString("huisnummer"),
@@ -86,10 +90,11 @@ public class AdresDAOPsql implements AdresDAO {
                     rs.getInt("reiziger_id"),
                     reiziger
                 );
-                return adres;
-            } else {
-                return null;
             }
+
+            rs.close();
+            pst.close();
+            return adres;
 
         } catch(Exception err) {
             System.err.println("AdresDAOsql geeft een error in findByReiziger(): " + err.getMessage() );
@@ -100,7 +105,7 @@ public class AdresDAOPsql implements AdresDAO {
     public List<Adres> findAll() {
         List<Adres> adresArray = new ArrayList<>();
         try {
-            Statement st = this.conn.createStatement();
+            Statement st = this.connection.createStatement();
             ResultSet rs = st.executeQuery("select * from adres");
 
             while ( rs.next() ) {
@@ -114,7 +119,7 @@ public class AdresDAOPsql implements AdresDAO {
                     null
                 );
 
-                Reiziger reiziger = rdao.findByAdres( adres );
+                Reiziger reiziger = reizigerDAO.findByAdres( adres );
                 adres.setReiziger(reiziger);
 
                 adresArray.add(adres);
