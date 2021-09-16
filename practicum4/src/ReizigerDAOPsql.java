@@ -24,6 +24,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             pst.setDate(5,  new Date(reiziger.getGeboorteDatum().getTime() ) );
 
             pst.execute();
+            pst.close();
             return true;
         } catch(Exception err) {
             System.err.println("ReizigersDAOsql geeft een error in save(): " + err.getMessage() );
@@ -42,6 +43,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             pst.setInt(5, reiziger.getId() );
 
             pst.execute();
+            pst.close();
             return true;
         } catch(Exception err) {
             System.err.println("ReizigersDAOsql geeft een error in update(): " + err.getMessage() );
@@ -55,6 +57,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             PreparedStatement pst = this.conn.prepareStatement(q);
             pst.setInt(1, reiziger.getId() );
             pst.execute();
+            pst.close();
 
             return true;
         } catch(Exception err) {
@@ -105,6 +108,9 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
                 reizigersArray.add(reiziger);
             }
+
+            pst.close();
+            rs.close();
 
             return reizigersArray;
         } catch(Exception err) {
@@ -174,26 +180,30 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     private Reiziger __findById(int id) {
         try {
+            Reiziger reiziger = null;
             String q = "SELECT * FROM reiziger WHERE reiziger_id = ?";
             PreparedStatement pst = this.conn.prepareStatement(q);
             pst.setInt(1, id );
             ResultSet rs = pst.executeQuery();
 
             if ( rs.next() ) {
-                return new Reiziger(
-                        rs.getInt("reiziger_id"),
-                        rs.getString("voorletters"),
-                        rs.getString("tussenvoegsel"),
-                        rs.getString("achternaam"),
-                        rs.getDate("geboorteDatum"),
-                        null
+                reiziger = new Reiziger(
+                    rs.getInt("reiziger_id"),
+                    rs.getString("voorletters"),
+                    rs.getString("tussenvoegsel"),
+                    rs.getString("achternaam"),
+                    rs.getDate("geboorteDatum"),
+                    null
                 );
-            } else {
-                return null;
             }
 
+            pst.close();
+            rs.close();
+            return reiziger;
+
+
         } catch(Exception err) {
-            System.err.println("ReizigersDAOsql geeft een error in findbyid(): " + err.getMessage() );
+            System.err.println("ReizigersDAOsql geeft een error in __findbyid(): " + err.getMessage() );
             return null;
         }
     }
