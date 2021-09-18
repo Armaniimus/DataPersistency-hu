@@ -38,8 +38,10 @@ HAVING count(cursus) > 1;
 --   ERM    | 1
 --   JAV    | 4
 --   OAG    | 2
--- DROP VIEW IF EXISTS s4_5; CREATE OR REPLACE VIEW s4_5 AS                                                     -- [TEST]
-
+DROP VIEW IF EXISTS s4_5; CREATE OR REPLACE VIEW s4_5 AS                                                     -- [TEST]
+SELECT cursus, count(cursus) as aantal
+FROM uitvoeringen
+GROUP BY cursus;
 
 -- S4.6.
 -- Bepaal hoeveel jaar leeftijdsverschil er zit tussen de oudste en de
@@ -47,15 +49,21 @@ HAVING count(cursus) > 1;
 -- de medewerkers (`gemiddeld`).
 -- Je mag hierbij aannemen dat elk jaar 365 dagen heeft.
 -- DROP VIEW IF EXISTS s4_6; CREATE OR REPLACE VIEW s4_6 AS                                                     -- [TEST]
-
+SELECT
+    ( max(gbdatum) - min(gbdatum) ) / 365 AS verschil,
+	avg(current_date - gbdatum) / 365 AS gemiddeld
+FROM medewerkers;
 
 -- S4.7.
 -- Geef van het hele bedrijf een overzicht van het aantal medewerkers dat
 -- er werkt (`aantal_medewerkers`), de gemiddelde commissie die ze
 -- krijgen (`commissie_medewerkers`), en hoeveel dat gemiddeld
 -- per verkoper is (`commissie_verkopers`).
--- DROP VIEW IF EXISTS s4_7; CREATE OR REPLACE VIEW s4_7 AS                                                     -- [TEST]
-
+DROP VIEW IF EXISTS s4_7; CREATE OR REPLACE VIEW s4_7 AS                                                     -- [TEST]
+SELECT sum(1) AS aantal_medewerkers,
+    sum(comm) / sum(1) AS commissie_medewerkers,
+    sum(comm) / sum(case when functie = 'VERKOPER' then 1 else 0 end) AS commissie_verkopers
+FROM medewerkers;
 
 
 -- -------------------------[ HU TESTRAAMWERK ]--------------------------------
