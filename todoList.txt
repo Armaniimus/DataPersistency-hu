@@ -1,0 +1,15 @@
+s1: S1.3a - gebruik een SEQUENCE
+s2: S2.3 -- Niet fout, maar er is geen join nodig hier. Dit kan je direct uit de uitvoeringen tabel halen S2.7 -- Je vergeet de bovengrens van snr 5 aan te passen.
+s3: done?
+s4: done?
+
+p1: done
+p2: done
+p3:
+Ik zie bij ReizigerDAOsql niet dat je het adres persisteerd bij save, update en delete(). Dit moet nog toegevoegd worden.
+
+p4:
+Je delete het adres en de ocChipkaarten wel, maar je saved en update ze niet. Voeg dit nog toe.
+
+p5:
+nietgemaakt
