@@ -14,16 +14,24 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     public boolean save(Reiziger reiziger) {
         try {
-            String q = "INSERT INTO reiziger (reiziger_id, voorletters, tussenvoegsel, achternaam, geboorteDatum) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement pst = this.conn.prepareStatement(q);
-            pst.setInt(1, reiziger.getId() );
-            pst.setString(2, reiziger.getVoorletters() );
-            pst.setString(3, reiziger.getTussenvoegsel() );
-            pst.setString(4, reiziger.getAchternaam() );
-            pst.setDate(5,  new Date(reiziger.getGeboorteDatum().getTime() ) );
 
-            pst.execute();
-            return true;
+            if ( reiziger.getAdres() != null ) {
+                String q = "INSERT INTO reiziger (reiziger_id, voorletters, tussenvoegsel, achternaam, geboorteDatum) VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement pst = this.conn.prepareStatement(q);
+                pst.setInt(1, reiziger.getId() );
+                pst.setString(2, reiziger.getVoorletters() );
+                pst.setString(3, reiziger.getTussenvoegsel() );
+                pst.setString(4, reiziger.getAchternaam() );
+                pst.setDate(5,  new Date(reiziger.getGeboorteDatum().getTime() ) );
+
+                pst.execute();
+
+                adao.save( reiziger.getAdres() );
+                return true;
+            } else {
+                throw new Exception("save heeft geen valide Adres object");
+            }
+
         } catch(Exception err) {
             System.err.println("ReizigersDAOsql geeft een error in save(): " + err.getMessage() );
             return false;
@@ -32,16 +40,22 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     public boolean update(Reiziger reiziger) {
         try {
-            String q = "UPDATE reiziger SET voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboorteDatum = ? WHERE reiziger_id=?";
-            PreparedStatement pst = this.conn.prepareStatement(q);
-            pst.setString(1, reiziger.getVoorletters() );
-            pst.setString(2, reiziger.getTussenvoegsel() );
-            pst.setString(3, reiziger.getAchternaam() );
-            pst.setDate(4,  new Date(reiziger.getGeboorteDatum().getTime() ) );
-            pst.setInt(5, reiziger.getId() );
+            if (reiziger.getAdres() != null) {
+                String q = "UPDATE reiziger SET voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboorteDatum = ? WHERE reiziger_id=?";
+                PreparedStatement pst = this.conn.prepareStatement(q);
+                pst.setString(1, reiziger.getVoorletters() );
+                pst.setString(2, reiziger.getTussenvoegsel() );
+                pst.setString(3, reiziger.getAchternaam() );
+                pst.setDate(4,  new Date(reiziger.getGeboorteDatum().getTime() ) );
+                pst.setInt(5, reiziger.getId() );
 
-            pst.execute();
-            return true;
+                pst.execute();
+
+                this.adao.update( reiziger.getAdres() );
+                return true;
+            } else {
+                throw new Exception("update heeft geen valide Adres object");
+            }
         } catch(Exception err) {
             System.err.println("ReizigersDAOsql geeft een error in update(): " + err.getMessage() );
             return false;
@@ -50,6 +64,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     public boolean delete(Reiziger reiziger) {
         try {
+            this.adao.delete(reiziger.getAdres() );
             String q = "DELETE FROM reiziger WHERE reiziger_id = ?";
             PreparedStatement pst = this.conn.prepareStatement(q);
             pst.setInt(1, reiziger.getId() );
