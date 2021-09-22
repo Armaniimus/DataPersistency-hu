@@ -56,8 +56,14 @@ ON CONFLICT DO NOTHING;                                                         
 -- We breiden het salarissysteem uit naar zes schalen. Voer een extra schaal in voor mensen die
 -- tussen de 3001 en 4000 euro verdienen. Zij krijgen een toelage van 500 euro.
 INSERT INTO schalen(snr, ondergrens, bovengrens, toelage)
-VALUES (6, 3001, 4000, 500)
-ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+VALUES (6, 4001, 9999, 500)
+ON CONFLICT DO NOTHING;    
+
+UPDATE schalen
+SET bovengrens=4000
+WHERE snr = 5
+
+                                                                                     -- [TEST]
 
 
 -- S2.8. Nieuwe cursus
