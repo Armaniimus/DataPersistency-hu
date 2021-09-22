@@ -64,13 +64,19 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     public boolean delete(Reiziger reiziger) {
         try {
-            this.adao.delete(reiziger.getAdres() );
-            String q = "DELETE FROM reiziger WHERE reiziger_id = ?";
-            PreparedStatement pst = this.conn.prepareStatement(q);
-            pst.setInt(1, reiziger.getId() );
-            pst.execute();
+            if ( reiziger.getAdres() != null ) {
+                this.adao.delete(reiziger.getAdres() );
 
-            return true;
+                String q = "DELETE FROM reiziger WHERE reiziger_id = ?";
+                PreparedStatement pst = this.conn.prepareStatement(q);
+                pst.setInt(1, reiziger.getId() );
+                pst.execute();
+
+                return true;
+            } else {
+                throw new Exception("Delete heeft geen valide adres object");
+            }
+
         } catch(Exception err) {
             System.err.println("ReizigersDAOsql geeft een error in update(): " + err.getMessage() );
             return false;

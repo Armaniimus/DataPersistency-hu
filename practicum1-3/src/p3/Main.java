@@ -35,7 +35,7 @@ public class Main {
         try {
             String dbUrl = "jdbc:postgresql://localhost:5432/ovchip";
             String user = "postgres";
-            String pass = "K1ll3r0p";
+            String pass = "123";
 
             connection = DriverManager.getConnection(dbUrl, user, pass);
         } catch (Exception err) {
@@ -72,6 +72,9 @@ public class Main {
         // Maak een nieuwe reiziger aan en persisteer deze in de database
         String gbdatum = "1981-03-14";
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", Date.valueOf(gbdatum), null);
+        Adres sietskeAdres = new Adres(42,"6060DE", "45", "Sietskedreef", "utrecht", 77, sietske );
+        sietske.setAdres(sietskeAdres);
+
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
         rdao.save(sietske);
         reizigers = rdao.findAll();
