@@ -12,29 +12,64 @@ public class ProductDAOPsql implements ProductDAO{
         this.ovChipkaartDAO = localOvDao;
     }
 
-
-    public boolean save(OVChipkaart ovChipkaart) {
+    public boolean save(Product product) {
         return false;
     }
 
     public boolean saveList(ArrayList<Product> productArrayList) {
-        return false;
+        try {
+            if ( productArrayList == null || productArrayList.isEmpty() ) {
+                throw new Exception("Product Arraylist is invalide");
+            }
+
+            for (int i=0; i<productArrayList.size(); i++) {
+                this.save( productArrayList.get(i) );
+            }
+            return true;
+        } catch(Exception err) {
+            System.err.println("ProductDAOPsql geeft een error in saveList(): " + err.getMessage() + " " + err.getStackTrace() );
+            return false;
+        }
     }
 
-    public boolean update(OVChipkaart ovChipkaart) {
+    public boolean update(Product product) {
         return false;
     }
 
     public boolean updateList(ArrayList<Product> productArrayList) {
-        return false;
+        try {
+            if ( productArrayList == null || productArrayList.isEmpty() ) {
+                throw new Exception("Product Arraylist is invalide");
+            }
+
+            for (int i=0; i<productArrayList.size(); i++) {
+                this.update( productArrayList.get(i) );
+            }
+            return true;
+        } catch(Exception err) {
+            System.err.println("ProductDAOPsql geeft een error in updateList(): " + err.getMessage() + " " + err.getStackTrace() );
+            return false;
+        }
     }
 
-    public boolean delete(OVChipkaart ovChipkaart) {
+    public boolean delete(Product product) {
         return false;
     }
 
     public boolean deleteList(ArrayList<Product> productArrayList) {
-        return false;
+        try {
+            if ( productArrayList == null || productArrayList.isEmpty() ) {
+                throw new Exception("Product Arraylist is invalide");
+            }
+
+            for (int i=0; i<productArrayList.size(); i++) {
+                this.delete( productArrayList.get(i) );
+            }
+            return true;
+        } catch(Exception err) {
+            System.err.println("ProductDAOPsql geeft een error in deleteList(): " + err.getMessage() + " " + err.getStackTrace() );
+            return false;
+        }
     }
 
     public ArrayList<Product>findByOVChipkaart(OVChipkaart ovChipkaart) {

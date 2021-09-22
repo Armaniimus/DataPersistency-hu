@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 
 public interface ProductDAO {
-    public boolean save(OVChipkaart ovChipkaart);
+    public boolean save(Product product);
     public boolean saveList(ArrayList<Product> productArrayList);
-    public boolean update(OVChipkaart ovChipkaart);
+    public boolean update(Product product);
     public boolean updateList(ArrayList<Product> productArrayList);
-    public boolean delete(OVChipkaart ovChipkaart);
+    public boolean delete(Product product);
     public boolean deleteList(ArrayList<Product> productArrayList);
     public ArrayList<Product>findByOVChipkaart(OVChipkaart ovChipkaart);
     public ArrayList<Product> findAll();

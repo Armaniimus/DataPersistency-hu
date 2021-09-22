@@ -4,9 +4,11 @@ import java.util.ArrayList;
 public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     private Connection conn;
     private ReizigerDAO reizigerDAO;
+    private ProductDAO productDAO;
 
     public OVChipkaartDAOPsql(Connection localConn) { this.conn = localConn; }
     public void setReizigerDAO(ReizigerDAO reizigerDAO) { this.reizigerDAO = reizigerDAO; }
+    public void setProductDAO(ProductDAO productDAO) { this.productDAO = productDAO; }
 
     public boolean save(OVChipkaart ovChipkaart) {
         try {
