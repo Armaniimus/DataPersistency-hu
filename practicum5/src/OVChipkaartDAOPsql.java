@@ -130,6 +130,27 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         return OVChipkaartArray;
     }
 
+    public ArrayList<OVChipkaart> findByProduct(Product product) {
+        ArrayList<OVChipkaart> OVChipkaartArray = new ArrayList<>();
+//        try {
+//            String q = "SELECT * FROM ov_chipkaart WHERE reiziger_id = ?";
+//            PreparedStatement pst = this.conn.prepareStatement(q);
+//            pst.setInt(1, reiziger.getId() );
+//            ResultSet rs = pst.executeQuery();
+//
+//            while (rs.next() ) {
+//                OVChipkaart ovChipkaart = this.__retrieveResultset(rs,  reiziger);
+//                OVChipkaartArray.add(ovChipkaart);
+//            }
+//            rs.close();
+//            pst.close();
+//        } catch(Exception err) {
+//            System.err.println("OVCHipkaartDAOPsql geeft een error in findByReiziger(): " + err.getMessage() + " " + err.getStackTrace() );
+//        }
+
+        return OVChipkaartArray;
+    }
+
     public ArrayList<OVChipkaart> findAll() {
         ArrayList<OVChipkaart> OVChipkaartArray = new ArrayList<>();
         try {
