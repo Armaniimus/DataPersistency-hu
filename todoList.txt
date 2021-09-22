@@ -1,6 +1,6 @@
 s1: S1.3a - gebruik een SEQUENCE
 s2: S2.3 -- Niet fout, maar er is geen join nodig hier. Dit kan je direct uit de uitvoeringen tabel halen S2.7 -- Je vergeet de bovengrens van snr 5 aan te passen.
-s3: done?
+s3: done
 s4: done?
 
 p1: done
