@@ -1,6 +1,5 @@
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ReizigerDAOPsql implements ReizigerDAO {
     private Connection connection;
@@ -15,74 +14,89 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     public boolean save(Reiziger reiziger) {
         try {
-            String q = "INSERT INTO reiziger (reiziger_id, voorletters, tussenvoegsel, achternaam, geboorteDatum) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement pst = this.connection.prepareStatement(q);
-            pst.setInt(1, reiziger.getId() );
-            pst.setString(2, reiziger.getVoorletters() );
-            pst.setString(3, reiziger.getTussenvoegsel() );
-            pst.setString(4, reiziger.getAchternaam() );
-            pst.setDate(5,  new Date(reiziger.getGeboorteDatum().getTime() ) );
+            if (reiziger.getOvChipkaartList() == null || reiziger.getOvChipkaartList().isEmpty() ) {
+                throw new Exception("update heeft geen valide OvChipkaartlist object");
 
-            pst.execute();
-            pst.close();
-            return true;
+            } else if (reiziger.getAdres() == null) {
+                throw new Exception("update heeft geen valide Adres object");
+
+            } else {
+                String q = "INSERT INTO reiziger (reiziger_id, voorletters, tussenvoegsel, achternaam, geboorteDatum) VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement pst = this.connection.prepareStatement(q);
+                pst.setInt(1, reiziger.getId() );
+                pst.setString(2, reiziger.getVoorletters() );
+                pst.setString(3, reiziger.getTussenvoegsel() );
+                pst.setString(4, reiziger.getAchternaam() );
+                pst.setDate(5,  new Date(reiziger.getGeboorteDatum().getTime() ) );
+
+                pst.execute();
+
+                this.adresDAO.save( reiziger.getAdres() );
+                this.ovChipkaartDAO.saveList( reiziger.getOvChipkaartList() );
+                return true;
+            }
+
         } catch(Exception err) {
             System.err.println("ReizigersDAOsql geeft een error in save(): " + err.getMessage() );
             return false;
         }
-    };
+    }
 
     public boolean update(Reiziger reiziger) {
         try {
-            String q = "UPDATE reiziger SET voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboorteDatum = ? WHERE reiziger_id=?";
-            PreparedStatement pst = this.connection.prepareStatement(q);
-            pst.setString(1, reiziger.getVoorletters() );
-            pst.setString(2, reiziger.getTussenvoegsel() );
-            pst.setString(3, reiziger.getAchternaam() );
-            pst.setDate(4,  new Date(reiziger.getGeboorteDatum().getTime() ) );
-            pst.setInt(5, reiziger.getId() );
+            if (reiziger.getOvChipkaartList() == null || reiziger.getOvChipkaartList().isEmpty() ) {
+                throw new Exception("update heeft geen valide OvChipkaartlist object");
 
-            pst.execute();
-            pst.close();
-            return true;
+            } else if (reiziger.getAdres() == null) {
+                throw new Exception("update heeft geen valide Adres object");
+
+            } else {
+                String q = "UPDATE reiziger SET voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboorteDatum = ? WHERE reiziger_id=?";
+                PreparedStatement pst = this.connection.prepareStatement(q);
+                pst.setString(1, reiziger.getVoorletters() );
+                pst.setString(2, reiziger.getTussenvoegsel() );
+                pst.setString(3, reiziger.getAchternaam() );
+                pst.setDate(4,  new Date(reiziger.getGeboorteDatum().getTime() ) );
+                pst.setInt(5, reiziger.getId() );
+
+                pst.execute();
+
+                this.adresDAO.update( reiziger.getAdres() );
+                this.ovChipkaartDAO.updateList( reiziger.getOvChipkaartList() );
+                return true;
+            }
+
         } catch(Exception err) {
             System.err.println("ReizigersDAOsql geeft een error in update(): " + err.getMessage() );
             return false;
         }
-    };
+    }
 
     public boolean delete(Reiziger reiziger) {
         try {
-            //make sure all relations are set
-            reiziger = this.__addRelations( reiziger);
+            if (reiziger.getOvChipkaartList() == null || reiziger.getOvChipkaartList().isEmpty() ) {
+                throw new Exception("Delete heeft geen valide ovArrayList object");
 
-            //load relations in variables
-            List<OVChipkaart> ovList = reiziger.getOvChipkaartList();
-            Adres adres = reiziger.getAdres();
+            } else if ( reiziger.getAdres() == null ) {
+                throw new Exception("Delete heeft geen valide adres object");
 
-            //delete relations
-            if (ovList != null) {
-                for (int i=0; i<ovList.size(); i++) {
-                    this.ovChipkaartDAO.delete( ovList.get(i) );
-                }
+            } else {
+                this.adresDAO.delete(reiziger.getAdres() );
+                this.ovChipkaartDAO.deleteList( reiziger.getOvChipkaartList() );
+
+                String q = "DELETE FROM reiziger WHERE reiziger_id = ?";
+                PreparedStatement pst = this.connection.prepareStatement(q);
+                pst.setInt(1, reiziger.getId() );
+                pst.execute();
+
+                return true;
             }
-            if (adres != null) {
-                this.adresDAO.delete( adres );
-            }
 
-            //delete reiziger
-            String q = "DELETE FROM reiziger WHERE reiziger_id = ?";
-            PreparedStatement pst = this.connection.prepareStatement(q);
-            pst.setInt(1, reiziger.getId() );
-            pst.execute();
-            pst.close();
-
-            return true;
         } catch(Exception err) {
             System.err.println("ReizigersDAOsql geeft een error in update(): " + err.getMessage() );
             return false;
         }
-    };
+    }
 
     public Reiziger findById(int id) {
         return this.__findById(id, null);
@@ -102,8 +116,8 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         return reiziger;
     }
 
-    public List<Reiziger> findByGBdatum(String datum) {
-        List<Reiziger> reizigersArray = new ArrayList<>();
+    public ArrayList<Reiziger> findByGBdatum(String datum) {
+        ArrayList<Reiziger> reizigersArray = new ArrayList<>();
 
         try {
             String q = "SELECT * FROM reiziger WHERE geboorteDatum = ?";
@@ -124,10 +138,10 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             System.err.println("ReizigersDAOsql geeft een error in findByGbDatum(): " + err.getMessage() + " " + err.getStackTrace() );
             return reizigersArray;
         }
-    };
+    }
 
-    public List<Reiziger> findAll() {
-        List<Reiziger> reizigersArray = new ArrayList<>();
+    public ArrayList<Reiziger> findAll() {
+        ArrayList<Reiziger> reizigersArray = new ArrayList<>();
 
         try {
             Statement st = this.connection.createStatement();
@@ -143,7 +157,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         }
 
         return reizigersArray;
-    };
+    }
 
     private Reiziger __addRelations(Reiziger reiziger) {
         reiziger = this.__addAdresRelation(reiziger);
@@ -162,7 +176,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     }
 
     private Reiziger __addOvchipkaartRelation(Reiziger reiziger) {
-        List<OVChipkaart> ovChipkaarten = ovChipkaartDAO.findByReiziger( reiziger );
+        ArrayList<OVChipkaart> ovChipkaarten = ovChipkaartDAO.findByReiziger( reiziger );
         if (!ovChipkaarten.isEmpty()) {
             reiziger.setOvChipkaartList(ovChipkaarten);
         }

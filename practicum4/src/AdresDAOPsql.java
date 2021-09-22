@@ -1,6 +1,5 @@
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class AdresDAOPsql implements AdresDAO {
     private Connection connection;
@@ -92,8 +91,8 @@ public class AdresDAOPsql implements AdresDAO {
         }
     }
 
-    public List<Adres> findAll() {
-        List<Adres> adresArray = new ArrayList<>();
+    public ArrayList<Adres> findAll() {
+        ArrayList<Adres> adresArray = new ArrayList<>();
         try {
             Statement st = this.connection.createStatement();
             ResultSet rs = st.executeQuery("select * from adres");

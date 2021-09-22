@@ -1,7 +1,7 @@
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class Reiziger {
     private int id;
@@ -10,7 +10,7 @@ public class Reiziger {
     private String achternaam;
     private Date geboorteDatum;
     private Adres adresObj;
-    private List<OVChipkaart> OvChipkaartList;
+    private ArrayList<OVChipkaart> OvChipkaartList;
 
     public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboorteDatum, Adres adres) {
         this.id = id;
@@ -124,6 +124,6 @@ public class Reiziger {
         return adresObj;
     }
 
-    public void setOvChipkaartList(List<OVChipkaart> ovChipkaartList) { this.OvChipkaartList = ovChipkaartList;}
-    public List<OVChipkaart> getOvChipkaartList() {return this.OvChipkaartList;}
+    public void setOvChipkaartList(ArrayList<OVChipkaart> ovChipkaartList) { this.OvChipkaartList = ovChipkaartList;}
+    public ArrayList<OVChipkaart> getOvChipkaartList() {return this.OvChipkaartList;}
 }
