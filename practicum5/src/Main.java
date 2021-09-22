@@ -9,20 +9,22 @@ public class Main {
     private static AdresDAOPsql adresDAO;
     private static ReizigerDAOPsql reizigerDAO;
     private static OVChipkaartDAOPsql OvChipkaartDAO;
+    private static ProductDAOPsql productDAO;
 
     public static void main(String[] args) {
         Connection localConn = getConnection();
         adresDAO = new AdresDAOPsql(localConn);
         OvChipkaartDAO = new OVChipkaartDAOPsql(localConn);
-
         reizigerDAO = new ReizigerDAOPsql(localConn, adresDAO, OvChipkaartDAO);
+        productDAO = new ProductDAOPsql(localConn, OvChipkaartDAO);
 
         OvChipkaartDAO.setReizigerDAO(reizigerDAO);
         adresDAO.setReizigerDAO(reizigerDAO);
 
-        testReizigerDAO();
-        testAdresDAO();
-        testOvchipkaartDAO();
+//        testReizigerDAO();
+//        testAdresDAO();
+//        testOvchipkaartDAO();
+        testProductDAO();
 
         closeConnection();
     }
@@ -237,5 +239,18 @@ public class Main {
         for (OVChipkaart o : OVChipkaarten2) {
             System.out.println(o);
         }
+    }
+
+    private static void testProductDAO() {
+        System.out.println("\n---------- Test ProductDAO -------------");
+
+//        productDAO.save();
+//        productDAO.update();
+//        productDAO.delete();
+
+        productDAO.findAll();
+//        productDAO.findByOVChipkaart();
+
+
     }
 }
