@@ -5,11 +5,9 @@ s4: done?
 
 p1: done
 p2: done
-p3:
-Ik zie bij ReizigerDAOsql niet dat je het adres persisteerd bij save, update en delete(). Dit moet nog toegevoegd worden.
+p3: done?
 
-p4:
-Je delete het adres en de ocChipkaarten wel, maar je saved en update ze niet. Voeg dit nog toe.
+p4: done?
 
 p5:
 nietgemaakt
