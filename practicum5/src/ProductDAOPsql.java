@@ -13,7 +13,21 @@ public class ProductDAOPsql implements ProductDAO{
     }
 
     public boolean save(Product product) {
-        return false;
+        try {
+            String q = "INSERT INTO product (product_nummer, naam, beschrijving, prijs) VALUES (?, ?, ?, ?)";
+            PreparedStatement pst = this.connection.prepareStatement(q);
+            pst.setInt(1, product.getProduct_nummer() );
+            pst.setString(2, product.getNaam() );
+            pst.setString(3, product.getBeschrijving() );
+            pst.setDouble(4, product.getPrijs() );
+
+            pst.execute();
+            pst.close();
+            return true;
+        } catch(Exception err) {
+            System.err.println("ProductDAOPsql geeft een error in save(): " + err.getMessage() + " " + err.getStackTrace() );
+            return false;
+        }
     }
 
     public boolean saveList(ArrayList<Product> productArrayList) {
@@ -33,7 +47,21 @@ public class ProductDAOPsql implements ProductDAO{
     }
 
     public boolean update(Product product) {
-        return false;
+        try {
+            String q = "UPDATE product SET naam?, beschrijving=?, prijs=? WHERE product_nummer=?)";
+            PreparedStatement pst = this.connection.prepareStatement(q);
+            pst.setString(1, product.getNaam() );
+            pst.setString(2, product.getBeschrijving() );
+            pst.setDouble(3, product.getPrijs() );
+            pst.setInt(4, product.getProduct_nummer() );
+
+            pst.execute();
+            pst.close();
+            return true;
+        } catch(Exception err) {
+            System.err.println("ProductDAOPsql geeft een error in update(): " + err.getMessage() + " " + err.getStackTrace() );
+            return false;
+        }
     }
 
     public boolean updateList(ArrayList<Product> productArrayList) {
@@ -53,7 +81,18 @@ public class ProductDAOPsql implements ProductDAO{
     }
 
     public boolean delete(Product product) {
-        return false;
+        try {
+            String q = "DELETE product WHERE product_nummer=?)";
+            PreparedStatement pst = this.connection.prepareStatement(q);
+            pst.setInt(1, product.getProduct_nummer() );
+
+            pst.execute();
+            pst.close();
+            return true;
+        } catch(Exception err) {
+            System.err.println("ProductDAOPsql geeft een error in delete(): " + err.getMessage() + " " + err.getStackTrace() );
+            return false;
+        }
     }
 
     public boolean deleteList(ArrayList<Product> productArrayList) {
