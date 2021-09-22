@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.ArrayList;
 
 public interface ReizigerDAO {
     public boolean save(Reiziger reiziger);
@@ -7,6 +7,6 @@ public interface ReizigerDAO {
     public Reiziger findById(int id);
     public Reiziger findByAdres(Adres adres);
     public Reiziger findByOVChipkaart(OVChipkaart ovChipkaart);
-    public List<Reiziger> findByGBdatum(String datum);
-    public List<Reiziger> findAll();
+    public ArrayList<Reiziger> findByGBdatum(String datum);
+    public ArrayList<Reiziger> findAll();
 }

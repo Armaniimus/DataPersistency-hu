@@ -1,13 +1,12 @@
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     private Connection conn;
-    private ReizigerDAO rdao;
+    private ReizigerDAO reizigerDAO;
 
     public OVChipkaartDAOPsql(Connection localConn) { this.conn = localConn; }
-    public void setRdao(ReizigerDAO rdao) { this.rdao = rdao; }
+    public void setReizigerDAO(ReizigerDAO reizigerDAO) { this.reizigerDAO = reizigerDAO; }
 
     public boolean save(OVChipkaart ovChipkaart) {
         try {
@@ -24,6 +23,22 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             return true;
         } catch(Exception err) {
             System.err.println("OVCHiplaartDAOPsql geeft een error in save(): " + err.getMessage() + " " + err.getStackTrace() );
+            return false;
+        }
+    }
+
+    public boolean saveList(ArrayList<OVChipkaart> ovChipkaartList) {
+        try {
+            if ( ovChipkaartList == null || ovChipkaartList.isEmpty() ) {
+                throw new Exception("OvChipkaart Arraylist is invalide");
+            }
+
+            for (int i=0; i<ovChipkaartList.size(); i++) {
+                this.save( ovChipkaartList.get(i) );
+            }
+            return true;
+        } catch(Exception err) {
+            System.err.println("OVCHiplaartDAOPsql geeft een error in saveList(): " + err.getMessage() + " " + err.getStackTrace() );
             return false;
         }
     }
@@ -47,6 +62,22 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         }
     }
 
+    public boolean updateList(ArrayList<OVChipkaart> ovChipkaartArrayList) {
+        try {
+            if ( ovChipkaartArrayList == null || ovChipkaartArrayList.isEmpty() ) {
+                throw new Exception("OvChipkaart Arraylist is invalide");
+            }
+
+            for (int i=0; i<ovChipkaartArrayList.size(); i++) {
+                this.update( ovChipkaartArrayList.get(i) );
+            }
+            return true;
+        } catch(Exception err) {
+            System.err.println("OVCHiplaartDAOPsql geeft een error in updateList(): " + err.getMessage() + " " + err.getStackTrace() );
+            return false;
+        }
+    }
+
     public boolean delete(OVChipkaart ovChipkaart) {
         try {
             String q = "DELETE FROM ov_chipkaart WHERE kaart_nummer=?;";
@@ -62,8 +93,24 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         }
     }
 
-    public List<OVChipkaart> findByReiziger(Reiziger reiziger) {
-        List<OVChipkaart> OVChipkaartArray = new ArrayList<>();
+    public boolean deleteList(ArrayList<OVChipkaart> ovChipkaartArrayList) {
+        try {
+            if ( ovChipkaartArrayList == null || ovChipkaartArrayList.isEmpty() ) {
+                throw new Exception("OvChipkaart Arraylist is invalide");
+            }
+
+            for (int i=0; i<ovChipkaartArrayList.size(); i++) {
+                this.delete( ovChipkaartArrayList.get(i) );
+            }
+            return true;
+        } catch(Exception err) {
+            System.err.println("OVCHiplaartDAOPsql geeft een error in deleteList(): " + err.getMessage() + " " + err.getStackTrace() );
+            return false;
+        }
+    }
+
+    public ArrayList<OVChipkaart> findByReiziger(Reiziger reiziger) {
+        ArrayList<OVChipkaart> OVChipkaartArray = new ArrayList<>();
         try {
             String q = "SELECT * FROM ov_chipkaart WHERE reiziger_id = ?";
             PreparedStatement pst = this.conn.prepareStatement(q);
@@ -76,7 +123,6 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             }
             rs.close();
             pst.close();
-
         } catch(Exception err) {
             System.err.println("OVCHipkaartDAOPsql geeft een error in findByReiziger(): " + err.getMessage() + " " + err.getStackTrace() );
         }
@@ -84,8 +130,8 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         return OVChipkaartArray;
     }
 
-    public List<OVChipkaart> findAll() {
-        List<OVChipkaart> OVChipkaartArray = new ArrayList<>();
+    public ArrayList<OVChipkaart> findAll() {
+        ArrayList<OVChipkaart> OVChipkaartArray = new ArrayList<>();
         try {
             Statement st = this.conn.createStatement();
             ResultSet rs = st.executeQuery("select * from ov_chipkaart");
@@ -125,7 +171,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     }
 
     private OVChipkaart __addrelations(OVChipkaart ovChipkaart) {
-        Reiziger reiziger = rdao.findByOVChipkaart(ovChipkaart);
+        Reiziger reiziger = reizigerDAO.findByOVChipkaart(ovChipkaart);
         ovChipkaart.setReiziger(reiziger);
 
         return ovChipkaart;

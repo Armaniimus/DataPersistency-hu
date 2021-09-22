@@ -2,12 +2,12 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.ArrayList;
 
 public class Main {
     private static Connection connection;
     private static AdresDAOPsql adresDAO;
-    private static ReizigerDAOPsql rijzigerDAO;
+    private static ReizigerDAOPsql reizigerDAO;
     private static OVChipkaartDAOPsql OvChipkaartDAO;
 
     public static void main(String[] args) {
@@ -15,10 +15,10 @@ public class Main {
         adresDAO = new AdresDAOPsql(localConn);
         OvChipkaartDAO = new OVChipkaartDAOPsql(localConn);
 
-        rijzigerDAO = new ReizigerDAOPsql(localConn, adresDAO, OvChipkaartDAO);
+        reizigerDAO = new ReizigerDAOPsql(localConn, adresDAO, OvChipkaartDAO);
 
-        OvChipkaartDAO.setRdao(rijzigerDAO);
-        adresDAO.setReizigerDAO(rijzigerDAO);
+        OvChipkaartDAO.setReizigerDAO(reizigerDAO);
+        adresDAO.setReizigerDAO(reizigerDAO);
 
         testReizigerDAO();
         testAdresDAO();
@@ -66,7 +66,7 @@ public class Main {
         System.out.println("\n---------- Test ReizigerDAO -------------");
 
         // Haal alle reizigers op uit de database
-        List<Reiziger> reizigers = rijzigerDAO.findAll();
+        ArrayList<Reiziger> reizigers = reizigerDAO.findAll();
         System.out.println("[Test] ReizigerDAO.findAll() geeft de volgende reizigers:");
         for (Reiziger r : reizigers) {
             System.out.println(r);
@@ -75,20 +75,32 @@ public class Main {
 
         // Maak een nieuwe reiziger aan en persisteer deze in de database
         String gbdatum = "1981-03-14";
+        String geldigTot = "2088-03-14";
+
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", Date.valueOf(gbdatum), null);
+        Adres sietskeAdres = new Adres(42,"6060DE", "45", "Sietskedreef", "utrecht", 77, sietske );
+
+        OVChipkaart sietskeOv = new OVChipkaart(6666, Date.valueOf(geldigTot), 1, 19.50,77, sietske);
+        ArrayList<OVChipkaart> ovkaartArrayList = new ArrayList<>();
+        ovkaartArrayList.add(sietskeOv);
+
+        sietske.setAdres(sietskeAdres);
+        sietske.setOvChipkaartList( ovkaartArrayList );
+
+
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
-        rijzigerDAO.save(sietske);
-        reizigers = rijzigerDAO.findAll();
+        reizigerDAO.save(sietske);
+        reizigers = reizigerDAO.findAll();
         System.out.println(reizigers.size() + " reizigers\n");
 
         // update reiziger
         System.out.println("[Test] before update:" + sietske);
         sietske.setTussenvoegsel("de");
         sietske.setAchternaam("boer");
-        rijzigerDAO.update(sietske);
+        reizigerDAO.update(sietske);
 
         System.out.print("[Test] after update:");
-        reizigers = rijzigerDAO.findAll();
+        reizigers = reizigerDAO.findAll();
         System.out.println(" ReizigerDAO.findAll() geeft de volgende reizigers:");
         for (Reiziger r : reizigers) {
             System.out.println(r);
@@ -97,20 +109,20 @@ public class Main {
 
         // Delete reiziger
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.delete() ");
-        rijzigerDAO.delete(sietske);
-        reizigers = rijzigerDAO.findAll();
+        reizigerDAO.delete(sietske);
+        reizigers = reizigerDAO.findAll();
         System.out.println(reizigers.size() + " reizigers");
         System.out.println();
 
         // FindById reiziger
         System.out.println("[Test] findByID id 4 wordt gezocht");
-        Reiziger reizigerVier = rijzigerDAO.findById(4);
+        Reiziger reizigerVier = reizigerDAO.findById(4);
         System.out.println(reizigerVier);
         System.out.println();
 
         // FindByGbDatum
         System.out.println("[Test] ReizigerDAO.findByGBdatum(\" 2002-10-22 \") geeft de volgende reizigers:");
-        List<Reiziger> reizigersGb = rijzigerDAO.findByGBdatum("2002-10-22");
+        ArrayList<Reiziger> reizigersGb = reizigerDAO.findByGBdatum("2002-10-22");
 
         for (Reiziger r : reizigersGb) {
             System.out.println(r);
@@ -119,16 +131,16 @@ public class Main {
 
     }
     private static void testAdresDAO() {
-        if (rijzigerDAO.findById(6) == null) {
+        if (reizigerDAO.findById(6) == null) {
             String gbdatum2 = "1981-03-14";
             Reiziger test = new Reiziger(6, "t", "est", " voor adres", Date.valueOf(gbdatum2), null);
-            rijzigerDAO.save(test);
+            reizigerDAO.save(test);
         }
 
         System.out.println("\n---------- Test AdresDAO -------------");
 
         // Haal alle reizigers op uit de database
-        List<Adres> adressen = adresDAO.findAll();
+        ArrayList<Adres> adressen = adresDAO.findAll();
         System.out.println("[Test] AdresDAO.findAll() geeft de volgende adressen:");
         for (Adres a : adressen) {
             System.out.println(a);
@@ -166,7 +178,7 @@ public class Main {
         // FindByreiziger reiziger
         System.out.println("[Test] findByReiziger reiziger met id 1 wordt gezocht");
 
-        Adres gevondenAdres = adresDAO.findByReiziger( rijzigerDAO.findById(1) );
+        Adres gevondenAdres = adresDAO.findByReiziger( reizigerDAO.findById(1) );
         System.out.println(gevondenAdres);
         System.out.println();
     }
@@ -175,7 +187,7 @@ public class Main {
         System.out.println("\n---------- Test OvchipkaartDAO -------------");
 
         // Haal alle reizigers op uit de database
-        List<OVChipkaart> OVChipkaarten = OvChipkaartDAO.findAll();
+        ArrayList<OVChipkaart> OVChipkaarten = OvChipkaartDAO.findAll();
         System.out.println("[Test] OVChipkaartDAO.findAll() geeft de volgende Ovchipkaarten:");
         for (OVChipkaart o : OVChipkaarten) {
             System.out.println(o);
@@ -213,7 +225,7 @@ public class Main {
         // FindByreiziger reiziger
         System.out.println("[Test] findByReiziger reiziger met id 1 wordt gezocht");
 
-        List<OVChipkaart> OVChipkaarten2 = OvChipkaartDAO.findByReiziger( rijzigerDAO.findById(1) );
+        ArrayList<OVChipkaart> OVChipkaarten2 = OvChipkaartDAO.findByReiziger( reizigerDAO.findById(1) );
         for (OVChipkaart o : OVChipkaarten2) {
             System.out.println(o);
         }
@@ -221,7 +233,7 @@ public class Main {
         // FindByreiziger reiziger
         System.out.println("[Test] findByReiziger reiziger met id 2 wordt gezocht");
 
-        OVChipkaarten2 = OvChipkaartDAO.findByReiziger( rijzigerDAO.findById(2) );
+        OVChipkaarten2 = OvChipkaartDAO.findByReiziger( reizigerDAO.findById(2) );
         for (OVChipkaart o : OVChipkaarten2) {
             System.out.println(o);
         }
