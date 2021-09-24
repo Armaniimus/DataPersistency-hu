@@ -54,14 +54,6 @@ public class Main {
         }
     }
 
-    /**
-     * P2. Reiziger DAO: persistentie van een klasse
-     *
-     * Deze methode test de CRUD-functionaliteit van de Reiziger DAO
-     *
-     * @throws SQLException
-     */
-
     private static void testReizigerDAO() {
         System.out.println("\n---------- Test ReizigerDAO -------------");
         testReizigerFindAll();
@@ -85,10 +77,10 @@ public class Main {
         ArrayList<Reiziger> reizigers = reizigerDAO.findAll();
         ArrayList<OVChipkaart> ovkaartArrayList = new ArrayList<>();
 
-        String gbdatum = "1981-03-14";
+        String geboorteDatum = "1981-03-14";
         String geldigTot = "2088-03-14";
 
-        Reiziger sietske = new Reiziger(77, "S", "", "Boers", Date.valueOf(gbdatum), null);
+        Reiziger sietske = new Reiziger(77, "S", "", "Boers", Date.valueOf(geboorteDatum), null);
         Adres sietskeAdres = new Adres(42,"Sietskedreef", "45", "Utrecht", "6060DE", 77, sietske );
         OVChipkaart sietskeOv = new OVChipkaart(6666, Date.valueOf(geldigTot), 1, 19.50,77, sietske);
 
@@ -137,20 +129,19 @@ public class Main {
     }
 
     private static void testReizigerFindByGbDatum() {
-        System.out.println("[Test] ReizigerDAO.findByGBdatum(\" 2002-10-22 \") geeft de volgende reizigers:");
+        System.out.println("[Test] ReizigerDAO.findByGbDatum(\" 2002-10-22 \") geeft de volgende reizigers:");
         ArrayList<Reiziger> reizigersGb = reizigerDAO.findByGBdatum("2002-10-22");
 
         for (Reiziger r : reizigersGb) {
             System.out.println(r);
         }
         System.out.println();
-
     }
 
     private static void testAdresDAO() {
         if (reizigerDAO.findById(6) == null) {
-            String gbdatum2 = "1981-03-14";
-            Reiziger test = new Reiziger(6, "t", "est", " voor adres", Date.valueOf(gbdatum2), null);
+            String geboorteDatum2 = "1981-03-14";
+            Reiziger test = new Reiziger(6, "t", "est", " voor adres", Date.valueOf(geboorteDatum2), null);
             reizigerDAO.save(test);
         }
 
@@ -173,7 +164,6 @@ public class Main {
     }
 
     private static void testAdresUpdate() {
-        ArrayList<Adres> adressen = adresDAO.findAll();
         Adres newAdres = adresDAO.findById(20);
 
         System.out.println("[Test] before update:" + newAdres);
@@ -236,7 +226,7 @@ public class Main {
     private static void testOvchipkaartSave() {
         ArrayList<OVChipkaart> OVChipkaarten = OvChipkaartDAO.findAll();
         OVChipkaart newOv = new OVChipkaart(0,Date.valueOf("2022-12-01"), 1, 25.50, 2, null );
-        System.out.print("[Test] Eerst " + OVChipkaarten.size() + " ovChipkaarten, na OVchipkaartDAO.save() ");
+        System.out.print("[Test] Eerst " + OVChipkaarten.size() + " ovChipkaarten, na OvchipkaartDAO.save() ");
         OvChipkaartDAO.save(newOv);
         OVChipkaarten = OvChipkaartDAO.findAll();
         System.out.println(OVChipkaarten.size() + " ovChipkaarten\n");
@@ -261,7 +251,7 @@ public class Main {
 
     private static void testOvchipkaartDelete() {
         ArrayList<OVChipkaart> OVChipkaarten = OvChipkaartDAO.findAll();
-        System.out.print("[Test] Eerst " + OVChipkaarten.size() + " OVchipkaarten, na OVChipkaartDAO.delete() ");
+        System.out.print("[Test] Eerst " + OVChipkaarten.size() + " Ovchipkaarten, na OVChipkaartDAO.delete() ");
         OVChipkaart newOv = OvChipkaartDAO.findByKaartNummer(0);
         OvChipkaartDAO.delete(newOv);
         OVChipkaarten = OvChipkaartDAO.findAll();
@@ -292,12 +282,12 @@ public class Main {
         testProductDelete();
     }
 
+    /**
+     * find all product
+     */
     private static void testProductFindAll() {
         System.out.println("\n---------- Test ProductDAO -------------");
 
-        /**
-         * find all product
-         */
         ArrayList<Product> producten = productDAO.findAll();
         System.out.println("[Test] AdresDAO.findAll() geeft de volgende adressen:");
         for (Product a : producten) {
@@ -316,7 +306,6 @@ public class Main {
         productDAO.save(oldPeopleProduct);
         producten = productDAO.findAll();
         System.out.println(producten.size() + " adressen\n");
-        oldPeopleProduct = null;
     }
 
     /**
@@ -332,7 +321,6 @@ public class Main {
         oldPeopleProduct2 = productDAO.findById(7);
         System.out.println("[Test] after update: " + oldPeopleProduct2);
         System.out.println();
-        oldPeopleProduct2 = null;
     }
 
     /**
@@ -345,6 +333,5 @@ public class Main {
         oldPeopleProduct3 = productDAO.findById(7);
         System.out.println("[Test] after delete: " + oldPeopleProduct3);
         System.out.println();
-        oldPeopleProduct3 = null;
     }
 }

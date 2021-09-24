@@ -115,8 +115,8 @@ public class ProductDAOPsql implements ProductDAO{
         ArrayList<Product> productArrayList = new ArrayList<>();
         try {
             String q = "SELECT product.product_nummer, naam, beschrijving, prijs FROM ov_chipkaart_product " +
-                    "INNER JOIN product ON ov_chipkaart_product.product_nummer = product.product_nummer " +
-                    "WHERE kaart_nummer = ?";
+            "INNER JOIN product ON ov_chipkaart_product.product_nummer = product.product_nummer " +
+            "WHERE kaart_nummer = ?";
             PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1, ovChipkaart.getKaartNummer() );
             ResultSet rs = pst.executeQuery();
