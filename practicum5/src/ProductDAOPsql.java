@@ -4,8 +4,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 
 public class ProductDAOPsql implements ProductDAO{
-    private Connection connection;
-    private OVChipkaartDAO ovChipkaartDAO;
+    private final Connection connection;
+    private final OVChipkaartDAO ovChipkaartDAO;
 
     public ProductDAOPsql ( Connection localConnection, OVChipkaartDAO localOvDao) {
         this.connection = localConnection;
@@ -14,7 +14,7 @@ public class ProductDAOPsql implements ProductDAO{
 
     public boolean save(Product product) {
         try {
-            String q = "INSERT INTO product (product_nummer, naam, beschrijving, prijs) VALUES (?, ?, ?, ?)";
+            String q = "INSERT INTO product (product_nummer, naam, beschrijving, prijs) ) VALUES (?, ?, ?, ?)";
             PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1, product.getProduct_nummer() );
             pst.setString(2, product.getNaam() );
@@ -25,7 +25,7 @@ public class ProductDAOPsql implements ProductDAO{
             pst.close();
             return true;
         } catch(Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in save(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.test("saveList()" ,err);
             return false;
         }
     }
@@ -36,12 +36,12 @@ public class ProductDAOPsql implements ProductDAO{
                 throw new Exception("Product Arraylist is invalide");
             }
 
-            for (int i=0; i<productArrayList.size(); i++) {
-                this.save( productArrayList.get(i) );
+            for (Product product : productArrayList) {
+                this.save(product);
             }
             return true;
         } catch(Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in saveList(): " + err.getMessage() + " " + err.getStackTrace() );
+            System.err.println("ProductDAOPsql geeft een error in saveList(): " + err.getStackTrace() );
             return false;
         }
     }
@@ -196,5 +196,20 @@ public class ProductDAOPsql implements ProductDAO{
             System.err.println("ProductDAOPsql geeft een error in __retrieveResultSet(): " + err.getMessage() + " " +  err.getStackTrace());
         }
         return product;
+    }
+
+    private void test(String errString, Exception err) {
+        String methodStr = "ProductDAOPsql geeft een error in : " + errString + ":\n";
+
+        StackTraceElement[] errStack = err.getStackTrace();
+        String errStackString = "";
+
+        for (StackTraceElement stackTraceElement : errStack) {
+            errStackString += "    " + stackTraceElement + "\n";
+        }
+
+        System.err.println("\n" + methodStr
+        + "  " + err.getMessage() + "\n"
+        + errStackString );
     }
 }
