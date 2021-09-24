@@ -7,7 +7,7 @@ public class ProductDAOPsql implements ProductDAO{
     private Connection connection;
     private OVChipkaartDAO ovChipkaartDAO;
 
-    public ProductDAOPsql ( Connection localConnection, OVChipkaartDAO localOvDao){
+    public ProductDAOPsql ( Connection localConnection, OVChipkaartDAO localOvDao) {
         this.connection = localConnection;
         this.ovChipkaartDAO = localOvDao;
     }
@@ -48,7 +48,7 @@ public class ProductDAOPsql implements ProductDAO{
 
     public boolean update(Product product) {
         try {
-            String q = "UPDATE product SET naam?, beschrijving=?, prijs=? WHERE product_nummer=?)";
+            String q = "UPDATE product SET naam=?, beschrijving=?, prijs=? WHERE product_nummer=?;";
             PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setString(1, product.getNaam() );
             pst.setString(2, product.getBeschrijving() );
@@ -59,7 +59,7 @@ public class ProductDAOPsql implements ProductDAO{
             pst.close();
             return true;
         } catch(Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in update(): " + err.getMessage() + " " + err.getStackTrace() );
+            System.err.println("ProductDAOPsql geeft een error in update(): " + err.getMessage() + " " + err.getCause() );
             return false;
         }
     }
@@ -82,7 +82,7 @@ public class ProductDAOPsql implements ProductDAO{
 
     public boolean delete(Product product) {
         try {
-            String q = "DELETE product WHERE product_nummer=?)";
+            String q = "DELETE FROM product WHERE product_nummer=?";
             PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1, product.getProduct_nummer() );
 
@@ -90,7 +90,7 @@ public class ProductDAOPsql implements ProductDAO{
             pst.close();
             return true;
         } catch(Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in delete(): " + err.getMessage() + " " + err.getStackTrace() );
+            System.err.println("ProductDAOPsql geeft een error in delete(): " + err.getMessage() + " " + err.getCause() + " " + err.getClass() );
             return false;
         }
     }
@@ -134,10 +134,30 @@ public class ProductDAOPsql implements ProductDAO{
         return productArrayList;
     }
 
+    public Product findById(int id) {
+        Product product = null;
+        try {
+            String q = "SELECT product_nummer, naam, beschrijving, prijs FROM product WHERE product_nummer = ?";
+            PreparedStatement pst = this.connection.prepareStatement(q);
+            pst.setInt(1, id);
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next() ) {
+                product = this.__retrieveResultset(rs);
+            }
+            rs.close();
+            pst.close();
+
+        } catch(Exception err) {
+            System.err.println("ProductDAOPsql geeft een error in findById(): " + err.getMessage() + " " + err.getStackTrace() );
+        }
+        return product;
+    }
+
     public ArrayList<Product> findAll() {
         ArrayList<Product> productArrayList = new ArrayList<>();
         try {
-            String q = "SELECT product_nummer, naam, beschrijving, prijs FROM ov_chipkaart_product";
+            String q = "SELECT product_nummer, naam, beschrijving, prijs FROM product";
             PreparedStatement pst = this.connection.prepareStatement(q);
             ResultSet rs = pst.executeQuery();
 

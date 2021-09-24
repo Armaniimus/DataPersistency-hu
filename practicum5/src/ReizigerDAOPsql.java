@@ -45,10 +45,10 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     public boolean update(Reiziger reiziger) {
         try {
             if (reiziger.getOvChipkaartList() == null || reiziger.getOvChipkaartList().isEmpty() ) {
-                throw new Exception("update heeft geen valide OvChipkaartlist object");
+                throw new Exception("update heeft geen OvChipkaartlist object");
 
             } else if (reiziger.getAdres() == null) {
-                throw new Exception("update heeft geen valide Adres object");
+                throw new Exception("update heeft geen Adres object");
 
             } else {
                 String q = "UPDATE reiziger SET voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboorteDatum = ? WHERE reiziger_id=?";
