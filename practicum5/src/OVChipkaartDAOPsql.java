@@ -172,10 +172,11 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         return OVChipkaartArray;
     }
 
-    public OVChipkaart findByKaartNummer() {
+    public OVChipkaart findByKaartNummer(int id) {
         try {
             String q = "SELECT * FROM ov_chipkaart WHERE kaart_nummer = ?";
             PreparedStatement pst = this.conn.prepareStatement(q);
+            pst.setInt(1, id );
             ResultSet rs = pst.executeQuery();
 
             OVChipkaart ovChipkaart = null;
