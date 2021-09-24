@@ -186,12 +186,13 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     private Reiziger __findById(int id, Adres adres) {
         try {
+            Reiziger reiziger = null;
+
             String q = "SELECT * FROM reiziger WHERE reiziger_id = ?";
             PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1, id );
             ResultSet rs = pst.executeQuery();
 
-            Reiziger reiziger = null;
             if ( rs.next() ) {
                 reiziger =  this.__retrieveResultset(rs, adres);
             }
