@@ -89,7 +89,7 @@ public class Main {
         String geldigTot = "2088-03-14";
 
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", Date.valueOf(gbdatum), null);
-        Adres sietskeAdres = new Adres(42,"6060DE", "45", "Sietskedreef", "utrecht", 77, sietske );
+        Adres sietskeAdres = new Adres(42,"Sietskedreef", "45", "Utrecht", "6060DE", 77, sietske );
         OVChipkaart sietskeOv = new OVChipkaart(6666, Date.valueOf(geldigTot), 1, 19.50,77, sietske);
 
 
@@ -164,7 +164,7 @@ public class Main {
 
     private static void testAdresSave() {
         ArrayList<Adres> adressen = adresDAO.findAll();
-        Adres newAdres = new Adres(20, "5654DE", "45", "toetsenbordlaan", "utrecht", 6, null);
+        Adres newAdres = new Adres(20, "Toetsenbordlaan", "45", "Utrecht", "5654DE", 6, null);
         System.out.print("[Test] Eerst " + adressen.size() + " adressen, na AdresDAO.save() ");
         adresDAO.save(newAdres);
 

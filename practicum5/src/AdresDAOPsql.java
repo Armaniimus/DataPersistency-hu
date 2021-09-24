@@ -49,7 +49,7 @@ public class AdresDAOPsql implements AdresDAO {
             pst.close();
             return true;
         } catch (Exception err) {
-            System.err.println("AdresDAOsql geeft een error in update(): " + err.getMessage() + " " + err.getStackTrace() );
+            System.err.println("AdresDAOsql geeft een error in update(): " + err.getMessage() + " " + err.getCause() + " " + err.getClass() + " " + adres.getPostcode() + adres.getHuisnummer()  );
             return false;
         }
     }
@@ -138,8 +138,8 @@ public class AdresDAOPsql implements AdresDAO {
                 rs.getInt("adres_id"),
                 rs.getString("straat"),
                 rs.getString("huisnummer"),
-                rs.getString("postcode"),
                 rs.getString("woonplaats"),
+                rs.getString("postcode"),
                 rs.getInt("reiziger_id"),
                 reiziger
             );

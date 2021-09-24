@@ -1,18 +1,18 @@
 public class Adres {
     private int    id;
-    private String postcode;
     private String huisnummer;
     private String straat;
     private String woonplaats;
+    private String postcode;
     private int    reizigerId;
     private Reiziger reizigerObj;
 
-    public Adres (int id, String postcode, String huisnummer, String straat, String woonplaats, int reizigerId, Reiziger reizigerObj) {
+    public Adres (int id, String straat, String huisnummer, String woonplaats, String postcode, int reizigerId, Reiziger reizigerObj) {
         this.id = id;
-        this.postcode = postcode;
-        this.huisnummer = huisnummer;
         this.straat = straat;
+        this.huisnummer = huisnummer;
         this.woonplaats = woonplaats;
+        this.postcode = postcode;
         this.reizigerId = reizigerId;
         this.reizigerObj = reizigerObj;
         if (reizigerObj != null) {
@@ -25,8 +25,8 @@ public class Adres {
         adresStr += this.id + ", ";
         adresStr += this.straat + ", ";
         adresStr += this.huisnummer + ", ";
-        adresStr += this.postcode + ", ";
         adresStr += this.woonplaats + ", ";
+        adresStr += this.postcode + ", ";
         adresStr += this.reizigerId;
 
         return adresStr;
