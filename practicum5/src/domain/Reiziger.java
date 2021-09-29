@@ -1,3 +1,5 @@
+package domain;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class Reiziger {
         String AdresObjString = "";
 
         if (this.adresObj != null) {
-            AdresObjString += "Adres" + this.adresObj.getInfo();
+            AdresObjString += "domain.Adres" + this.adresObj.getInfo();
         } else {
             AdresObjString += "null";
         }
@@ -56,7 +58,7 @@ public class Reiziger {
             OvChipkaartListString = "null";
         }
 
-        String resultString = "Reiziger{ ";
+        String resultString = "domain.Reiziger{ ";
         resultString += __internalGetInfo() + ", ";
         resultString += AdresObjString + ", ";
         resultString += OvChipkaartListString;

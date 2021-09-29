@@ -1,8 +1,17 @@
+package daos;
+
+import interfaces.AdresDAO;
+
+import domain.Adres;
+import domain.Reiziger;
+import lib.GenerateException;
+
 import java.sql.*;
 import java.util.ArrayList;
 
+
 public class AdresDAOPsql implements AdresDAO {
-    private Connection connection;
+    private final Connection connection;
     private ReizigerDAOPsql reizigerDAO;
 
     public AdresDAOPsql(Connection localConn) {
@@ -29,7 +38,7 @@ public class AdresDAOPsql implements AdresDAO {
             return true;
 
         } catch (Exception err) {
-            System.err.println("AdresDAOsql geeft een error in save(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return false;
         }
     }
@@ -49,7 +58,7 @@ public class AdresDAOPsql implements AdresDAO {
             pst.close();
             return true;
         } catch (Exception err) {
-            System.err.println("AdresDAOsql geeft een error in update(): " + err.getMessage() + " " + err.getCause() + " " + err.getClass() + " " + adres.getPostcode() + adres.getHuisnummer()  );
+            this.printErr(err);
             return false;
         }
     }
@@ -64,7 +73,7 @@ public class AdresDAOPsql implements AdresDAO {
 
             return true;
         } catch (Exception err) {
-            System.err.println("AdresDAOsql geeft een error in delete(): " + err.getMessage());
+            this.printErr(err);
             return false;
         }
     }
@@ -78,7 +87,7 @@ public class AdresDAOPsql implements AdresDAO {
 
             Adres adres = null;
             if (rs.next()) {
-                adres = __retrieveResultset(rs, null);
+                adres = __retrieveResultSet(rs, null);
             }
             rs.close();
             pst.close();
@@ -86,7 +95,7 @@ public class AdresDAOPsql implements AdresDAO {
             return adres;
 
         } catch (Exception err) {
-            System.err.println("AdresDAOsql geeft een error in findByReiziger(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return null;
         }
     }
@@ -98,12 +107,12 @@ public class AdresDAOPsql implements AdresDAO {
             ResultSet rs = st.executeQuery("select * from adres");
 
             while (rs.next()) {
-                Adres adres = this.__retrieveResultset(rs, null);
+                Adres adres = this.__retrieveResultSet(rs, null);
                 adresArray.add(adres);
             }
             rs.close();
         } catch (Exception err) {
-            System.err.println("AdresDAOsql geeft een error in findAll(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
         }
         return adresArray;
     }
@@ -118,7 +127,7 @@ public class AdresDAOPsql implements AdresDAO {
             ResultSet rs = pst.executeQuery();
 
             if (rs.next()) {
-                adres = this.__retrieveResultset(rs, null);
+                adres = this.__retrieveResultSet(rs, null);
             }
 
             rs.close();
@@ -126,12 +135,12 @@ public class AdresDAOPsql implements AdresDAO {
             return adres;
 
         } catch(Exception err){
-            System.err.println("AdresDAOsql geeft een error in findByReiziger(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return null;
         }
     }
 
-    private Adres __retrieveResultset(ResultSet rs, Reiziger reiziger)  {
+    private Adres __retrieveResultSet(ResultSet rs, Reiziger reiziger)  {
         Adres adres = null;
         try {
             adres = new Adres(
@@ -145,18 +154,22 @@ public class AdresDAOPsql implements AdresDAO {
             );
 
             if (reiziger == null) {
-                __addrelations(adres);
+                __addRelations(adres);
             }
         } catch (Exception err) {
-            System.err.println("AdresDAOsql geeft een error in __retrieveResultSet(): " + err.getMessage() + " " +  err.getStackTrace());
+            this.printErr(err);
         }
         return adres;
     }
 
-    private Adres __addrelations(Adres adres) {
+    private void __addRelations(Adres adres) {
         Reiziger reiziger = reizigerDAO.findByAdres(adres);
         adres.setReiziger(reiziger);
-
-        return adres;
     }
+
+    private void printErr(Exception err) {
+        String className = "" + this.getClass();
+        GenerateException.printError(className, err);
+    }
+
 }

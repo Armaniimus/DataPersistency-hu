@@ -1,14 +1,23 @@
+package daos;
+
+import interfaces.OVChipkaartDAO;
+
+import domain.OVChipkaart;
+import domain.Product;
+import domain.Reiziger;
+import lib.GenerateException;
+
 import java.sql.*;
 import java.util.ArrayList;
 
 public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     private final Connection connection;
-    private ReizigerDAO reizigerDAO;
-    private ProductDAO productDAO;
+    private ReizigerDAOPsql reizigerDAO;
+    private ProductDAOPsql productDAO;
 
     public OVChipkaartDAOPsql(Connection localConn) { this.connection = localConn; }
-    public void setReizigerDAO(ReizigerDAO reizigerDAO) { this.reizigerDAO = reizigerDAO; }
-    public void setProductDAO(ProductDAO productDAO) { this.productDAO = productDAO; }
+    public void setReizigerDAO(ReizigerDAOPsql reizigerDAO) { this.reizigerDAO = reizigerDAO; }
+    public void setProductDAO(ProductDAOPsql productDAO) { this.productDAO = productDAO; }
 
     public boolean save(OVChipkaart ovChipkaart) {
         try {
@@ -24,7 +33,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             pst.close();
             return true;
         } catch(Exception err) {
-            System.err.println("OVCHiplaartDAOPsql geeft een error in save(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return false;
         }
     }
@@ -32,7 +41,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     public boolean saveList(ArrayList<OVChipkaart> ovChipkaartList) {
         try {
             if ( ovChipkaartList == null || ovChipkaartList.isEmpty() ) {
-                throw new Exception("OvChipkaart Arraylist is invalide");
+                throw new Exception("OvChipkaart Arraylist is invalid");
             }
 
             for (OVChipkaart ovChipkaart : ovChipkaartList) {
@@ -40,7 +49,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             }
             return true;
         } catch(Exception err) {
-            System.err.println("OVCHiplaartDAOPsql geeft een error in saveList(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return false;
         }
     }
@@ -59,7 +68,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             pst.close();
             return true;
         } catch(Exception err) {
-            System.err.println("OVCHiplaartDAOPsql geeft een error in update(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return false;
         }
     }
@@ -67,7 +76,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     public boolean updateList(ArrayList<OVChipkaart> ovChipkaartArrayList) {
         try {
             if ( ovChipkaartArrayList == null || ovChipkaartArrayList.isEmpty() ) {
-                throw new Exception("OvChipkaart Arraylist is invalide");
+                throw new Exception("OvChipkaart Arraylist is invalid");
             }
 
             for (OVChipkaart ovChipkaart : ovChipkaartArrayList) {
@@ -75,7 +84,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             }
             return true;
         } catch(Exception err) {
-            System.err.println("OVCHiplaartDAOPsql geeft een error in updateList(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return false;
         }
     }
@@ -90,7 +99,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             pst.close();
             return true;
         } catch(Exception err) {
-            System.err.println("OVCHiplaartDAOPsql geeft een error in delete(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return false;
         }
     }
@@ -98,7 +107,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     public boolean deleteList(ArrayList<OVChipkaart> ovChipkaartArrayList) {
         try {
             if ( ovChipkaartArrayList == null || ovChipkaartArrayList.isEmpty() ) {
-                throw new Exception("OvChipkaart Arraylist is invalide");
+                throw new Exception("OvChipkaart Arraylist is invalid");
             }
 
             for (OVChipkaart ovChipkaart : ovChipkaartArrayList) {
@@ -106,7 +115,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             }
             return true;
         } catch(Exception err) {
-            System.err.println("OVCHiplaartDAOPsql geeft een error in deleteList(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return false;
         }
     }
@@ -120,13 +129,13 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next() ) {
-                OVChipkaart ovChipkaart = this.__retrieveResultset(rs,  reiziger);
+                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs,  reiziger);
                 OVChipkaartArray.add(ovChipkaart);
             }
             rs.close();
             pst.close();
         } catch(Exception err) {
-            System.err.println("OVCHipkaartDAOPsql geeft een error in findByReiziger(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
         }
 
         return OVChipkaartArray;
@@ -147,13 +156,13 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next() ) {
-                OVChipkaart ovChipkaart = this.__retrieveResultset(rs,  null);
+                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs,  null);
                 OVChipkaartArray.add(ovChipkaart);
             }
             rs.close();
             pst.close();
         } catch(Exception err) {
-            System.err.println("OVCHipkaartDAOPsql geeft een error in findByProduct(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
         }
 
         return OVChipkaartArray;
@@ -166,13 +175,13 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             ResultSet rs = st.executeQuery("select * from ov_chipkaart");
 
             while (rs.next()) {
-                OVChipkaart ovChipkaart = this.__retrieveResultset(rs, null);
+                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs, null);
                 OVChipkaartArray.add(ovChipkaart);
             }
             rs.close();
 
         } catch(Exception err) {
-            System.err.println("OVCHiplaartDAOPsql geeft een error in findAll(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
         }
 
         return OVChipkaartArray;
@@ -187,7 +196,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
 
             OVChipkaart ovChipkaart = null;
             if (rs.next() ) {
-                ovChipkaart = this.__retrieveResultset(rs, null);
+                ovChipkaart = this.__retrieveResultSet(rs, null);
             }
             rs.close();
             pst.close();
@@ -195,19 +204,17 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             return ovChipkaart;
 
         } catch(Exception err) {
-            System.err.println("OVCHipkaartDAOPsql geeft een eror in findByKaartNummer(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return null;
         }
     }
 
-    private OVChipkaart __addrelations(OVChipkaart ovChipkaart) {
+    private void __addRelations(OVChipkaart ovChipkaart) {
         Reiziger reiziger = reizigerDAO.findByOVChipkaart(ovChipkaart);
         ovChipkaart.setReiziger(reiziger);
-
-        return ovChipkaart;
     }
 
-    private OVChipkaart __retrieveResultset(ResultSet rs, Reiziger reiziger)  {
+    private OVChipkaart __retrieveResultSet(ResultSet rs, Reiziger reiziger)  {
         OVChipkaart ovChipkaart = null;
         try {
             ovChipkaart = new OVChipkaart(
@@ -220,11 +227,15 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             );
 
             if (reiziger == null) {
-                __addrelations(ovChipkaart);
+                __addRelations(ovChipkaart);
             }
         } catch (Exception err) {
-            System.err.println("OvchipkaartDAOsql geeft een error in __retrieveResultSet(): " + err.getMessage() + " " +  err.getStackTrace());
+            this.printErr(err);
         }
         return ovChipkaart;
+    }
+    private void printErr(Exception err) {
+        String className = "" + this.getClass();
+        GenerateException.printError(className, err);
     }
 }

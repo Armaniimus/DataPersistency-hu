@@ -1,3 +1,13 @@
+import daos.AdresDAOPsql;
+import daos.OVChipkaartDAOPsql;
+import daos.ProductDAOPsql;
+import daos.ReizigerDAOPsql;
+
+import domain.Adres;
+import domain.OVChipkaart;
+import domain.Product;
+import domain.Reiziger;
+
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -130,7 +140,7 @@ public class Main {
 
     private static void testReizigerFindByGbDatum() {
         System.out.println("[Test] ReizigerDAO.findByGbDatum(\" 2002-10-22 \") geeft de volgende reizigers:");
-        ArrayList<Reiziger> reizigersGb = reizigerDAO.findByGBdatum("2002-10-22");
+        ArrayList<Reiziger> reizigersGb = reizigerDAO.findByGeboorteDatum("2002-10-22");
 
         for (Reiziger r : reizigersGb) {
             System.out.println(r);

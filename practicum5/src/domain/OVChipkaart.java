@@ -1,3 +1,5 @@
+package domain;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,7 +29,7 @@ public class OVChipkaart {
 
         string += __internalGetInfo() + ", ";
         if (this.reizigerObj != null) {
-            string += "Reiziger" + this.reizigerObj.getInfo();
+            string += "domain.Reiziger" + this.reizigerObj.getInfo();
         } else {
             string += "null";
         }

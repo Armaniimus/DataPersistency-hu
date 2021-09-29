@@ -1,5 +1,5 @@
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+package domain;
+
 import java.util.ArrayList;
 
 public class Product {
@@ -31,7 +31,7 @@ public class Product {
             OvChipkaartListString = "null";
         }
 
-        String resultString = "Product{ ";
+        String resultString = "domain.Product{ ";
         resultString += __internalGetInfo() + ", ";
         resultString += OvChipkaartListString;
         resultString += " }";

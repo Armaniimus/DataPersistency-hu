@@ -1,20 +1,28 @@
+package daos;
+
+import interfaces.ProductDAO;
+
+import domain.OVChipkaart;
+import domain.Product;
+import lib.GenerateException;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class ProductDAOPsql implements ProductDAO{
+public class ProductDAOPsql implements ProductDAO {
     private final Connection connection;
-    private final OVChipkaartDAO ovChipkaartDAO;
+    private final OVChipkaartDAOPsql ovChipkaartDAO;
 
-    public ProductDAOPsql ( Connection localConnection, OVChipkaartDAO localOvDao) {
+    public ProductDAOPsql ( Connection localConnection, OVChipkaartDAOPsql localOvDao) {
         this.connection = localConnection;
         this.ovChipkaartDAO = localOvDao;
     }
 
     public boolean save(Product product) {
         try {
-            String q = "INSERT INTO product (product_nummer, naam, beschrijving, prijs) ) VALUES (?, ?, ?, ?)";
+            String q = "INSERT INTO product (product_nummer, naam, beschrijving, prijs) VALUES (?, ?, ?, ?)";
             PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1, product.getProduct_nummer() );
             pst.setString(2, product.getNaam() );
@@ -25,7 +33,7 @@ public class ProductDAOPsql implements ProductDAO{
             pst.close();
             return true;
         } catch(Exception err) {
-            this.test("saveList()" ,err);
+            this.printErr(err);
             return false;
         }
     }
@@ -33,7 +41,7 @@ public class ProductDAOPsql implements ProductDAO{
     public boolean saveList(ArrayList<Product> productArrayList) {
         try {
             if ( productArrayList == null || productArrayList.isEmpty() ) {
-                throw new Exception("Product Arraylist is invalide");
+                throw new Exception("domain.Product Arraylist is invalid");
             }
 
             for (Product product : productArrayList) {
@@ -41,7 +49,7 @@ public class ProductDAOPsql implements ProductDAO{
             }
             return true;
         } catch(Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in saveList(): " + err.getStackTrace() );
+            this.printErr(err);
             return false;
         }
     }
@@ -59,7 +67,7 @@ public class ProductDAOPsql implements ProductDAO{
             pst.close();
             return true;
         } catch(Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in update(): " + err.getMessage() + " " + err.getCause() );
+            this.printErr(err);
             return false;
         }
     }
@@ -67,15 +75,15 @@ public class ProductDAOPsql implements ProductDAO{
     public boolean updateList(ArrayList<Product> productArrayList) {
         try {
             if ( productArrayList == null || productArrayList.isEmpty() ) {
-                throw new Exception("Product Arraylist is invalide");
+                throw new Exception("domain.Product Arraylist is invalid");
             }
 
-            for (int i=0; i<productArrayList.size(); i++) {
-                this.update( productArrayList.get(i) );
+            for (Product product : productArrayList) {
+                this.update(product);
             }
             return true;
         } catch(Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in updateList(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return false;
         }
     }
@@ -90,7 +98,7 @@ public class ProductDAOPsql implements ProductDAO{
             pst.close();
             return true;
         } catch(Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in delete(): " + err.getMessage() + " " + err.getCause() + " " + err.getClass() );
+            this.printErr(err);
             return false;
         }
     }
@@ -98,15 +106,15 @@ public class ProductDAOPsql implements ProductDAO{
     public boolean deleteList(ArrayList<Product> productArrayList) {
         try {
             if ( productArrayList == null || productArrayList.isEmpty() ) {
-                throw new Exception("Product Arraylist is invalide");
+                throw new Exception("domain.Product Arraylist is invalid");
             }
 
-            for (int i=0; i<productArrayList.size(); i++) {
-                this.delete( productArrayList.get(i) );
+            for (Product product : productArrayList) {
+                this.delete(product);
             }
             return true;
         } catch(Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in deleteList(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return false;
         }
     }
@@ -122,13 +130,13 @@ public class ProductDAOPsql implements ProductDAO{
             ResultSet rs = pst.executeQuery();
 
             while (rs.next() ) {
-                Product product = this.__retrieveResultset(rs);
+                Product product = this.__retrieveResultSet(rs);
                 productArrayList.add(product);
             }
             rs.close();
             pst.close();
         } catch(Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in findByOVChipkaart(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
         }
 
         return productArrayList;
@@ -143,13 +151,13 @@ public class ProductDAOPsql implements ProductDAO{
             ResultSet rs = pst.executeQuery();
 
             if (rs.next() ) {
-                product = this.__retrieveResultset(rs);
+                product = this.__retrieveResultSet(rs);
             }
             rs.close();
             pst.close();
 
         } catch(Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in findById(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
         }
         return product;
     }
@@ -162,26 +170,24 @@ public class ProductDAOPsql implements ProductDAO{
             ResultSet rs = pst.executeQuery();
 
             while (rs.next() ) {
-                Product product = this.__retrieveResultset(rs);
+                Product product = this.__retrieveResultSet(rs);
                 productArrayList.add(product);
             }
             rs.close();
             pst.close();
         } catch(Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in findAll(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
         }
 
         return productArrayList;
     }
 
-    private Product __addrelations( Product product ) {
+    private void __addRelations(Product product ) {
         ArrayList<OVChipkaart> ovChipkaartList = ovChipkaartDAO.findByProduct( product );
         product.setOvChipkaartList(ovChipkaartList);
-
-        return product;
     }
 
-    private Product __retrieveResultset(ResultSet rs)  {
+    private Product __retrieveResultSet(ResultSet rs)  {
         Product product = null;
         try {
             product = new Product(
@@ -190,26 +196,16 @@ public class ProductDAOPsql implements ProductDAO{
                 rs.getString("beschrijving"),
                 rs.getDouble("prijs")
             );
-            __addrelations(product);
+            __addRelations(product);
 
         } catch (Exception err) {
-            System.err.println("ProductDAOPsql geeft een error in __retrieveResultSet(): " + err.getMessage() + " " +  err.getStackTrace());
+            this.printErr(err);
         }
         return product;
     }
 
-    private void test(String errString, Exception err) {
-        String methodStr = "ProductDAOPsql geeft een error in : " + errString + ":\n";
-
-        StackTraceElement[] errStack = err.getStackTrace();
-        String errStackString = "";
-
-        for (StackTraceElement stackTraceElement : errStack) {
-            errStackString += "    " + stackTraceElement + "\n";
-        }
-
-        System.err.println("\n" + methodStr
-        + "  " + err.getMessage() + "\n"
-        + errStackString );
+    private void printErr(Exception err) {
+        String className = "" + this.getClass();
+        GenerateException.printError(className, err);
     }
 }

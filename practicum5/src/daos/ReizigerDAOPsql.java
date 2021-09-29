@@ -1,12 +1,21 @@
+package daos;
+
+import interfaces.ReizigerDAO;
+
+import domain.Reiziger;
+import domain.OVChipkaart;
+import domain.Adres;
+import lib.GenerateException;
+
 import java.sql.*;
 import java.util.ArrayList;
 
 public class ReizigerDAOPsql implements ReizigerDAO {
-    private Connection connection;
-    private AdresDAOPsql adresDAO;
-    private OVChipkaartDAO ovChipkaartDAO;
+    private final Connection connection;
+    private final AdresDAOPsql adresDAO;
+    private final OVChipkaartDAOPsql ovChipkaartDAO;
 
-    public ReizigerDAOPsql(Connection connection, AdresDAOPsql localAdao, OVChipkaartDAO localOdao) {
+    public ReizigerDAOPsql(Connection connection, AdresDAOPsql localAdao, OVChipkaartDAOPsql localOdao) {
         this.connection = connection;
         this.adresDAO = localAdao;
         this.ovChipkaartDAO = localOdao;
@@ -15,10 +24,10 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     public boolean save(Reiziger reiziger) {
         try {
             if (reiziger.getOvChipkaartList() == null || reiziger.getOvChipkaartList().isEmpty() ) {
-                throw new Exception("update heeft geen valide OvChipkaartlist object");
+                throw new Exception("update heeft geen valide OvChipkaart list object");
 
             } else if (reiziger.getAdres() == null) {
-                throw new Exception("update heeft geen valide Adres object");
+                throw new Exception("update heeft geen valide domain.Adres object");
 
             } else {
                 String q = "INSERT INTO reiziger (reiziger_id, voorletters, tussenvoegsel, achternaam, geboorteDatum) VALUES (?, ?, ?, ?, ?)";
@@ -37,7 +46,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             }
 
         } catch(Exception err) {
-            System.err.println("ReizigersDAOsql geeft een error in save(): " + err.getMessage() );
+            this.printErr(err);
             return false;
         }
     }
@@ -45,10 +54,10 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     public boolean update(Reiziger reiziger) {
         try {
             if (reiziger.getOvChipkaartList() == null || reiziger.getOvChipkaartList().isEmpty() ) {
-                throw new Exception("update heeft geen OvChipkaartlist object");
+                throw new Exception("update heeft geen OvChipkaart list object");
 
             } else if (reiziger.getAdres() == null) {
-                throw new Exception("update heeft geen Adres object");
+                throw new Exception("update heeft geen domain.Adres object");
 
             } else {
                 String q = "UPDATE reiziger SET voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboorteDatum = ? WHERE reiziger_id=?";
@@ -67,7 +76,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             }
 
         } catch(Exception err) {
-            System.err.println("ReizigersDAOsql geeft een error in update(): " + err.getMessage() );
+            this.printErr(err);
             return false;
         }
     }
@@ -93,7 +102,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             }
 
         } catch(Exception err) {
-            System.err.println("ReizigersDAOsql geeft een error in update(): " + err.getMessage() );
+            this.printErr(err);
             return false;
         }
     }
@@ -104,19 +113,17 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     public Reiziger findByAdres(Adres adres){
         int id = adres.getReizigerId();
-        Reiziger reiziger = this.__findById(id, adres);
 
-        return reiziger;
+        return this.__findById(id, adres);
     }
 
     public Reiziger findByOVChipkaart(OVChipkaart ovChipkaart){
         int id = ovChipkaart.getReizigerId();
-        Reiziger reiziger = this.__findById(id, null);
 
-        return reiziger;
+        return this.__findById(id, null);
     }
 
-    public ArrayList<Reiziger> findByGBdatum(String datum) {
+    public ArrayList<Reiziger> findByGeboorteDatum(String datum) {
         ArrayList<Reiziger> reizigersArray = new ArrayList<>();
 
         try {
@@ -126,7 +133,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
-                Reiziger reiziger =  this.__retrieveResultset(rs, null);
+                Reiziger reiziger =  this.__retrieveResultSet(rs, null);
                 reizigersArray.add(reiziger);
             }
 
@@ -135,7 +142,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
             return reizigersArray;
         } catch(Exception err) {
-            System.err.println("ReizigersDAOsql geeft een error in findByGbDatum(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return reizigersArray;
         }
     }
@@ -148,40 +155,36 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             ResultSet rs = st.executeQuery("select * from reiziger");
 
             while (rs.next()) {
-                Reiziger reiziger = this.__retrieveResultset(rs, null);
+                Reiziger reiziger = this.__retrieveResultSet(rs, null);
                 reizigersArray.add(reiziger);
             }
             rs.close();
         } catch (Exception err) {
-            System.err.println("ReizigersDAOsql geeft een error in findAll(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
         }
 
         return reizigersArray;
     }
 
     private Reiziger __addRelations(Reiziger reiziger) {
-        reiziger = this.__addAdresRelation(reiziger);
-        reiziger = this.__addOvchipkaartRelation(reiziger);
+        this.__addAdresRelation(reiziger);
+        this.__addOvchipkaartRelation(reiziger);
 
         return reiziger;
     }
 
-    private Reiziger __addAdresRelation(Reiziger reiziger) {
+    private void __addAdresRelation(Reiziger reiziger) {
         Adres adres = adresDAO.findByReiziger( reiziger );
         if (adres != null) {
             reiziger.setAdres(adres);
         }
-
-        return reiziger;
     }
 
-    private Reiziger __addOvchipkaartRelation(Reiziger reiziger) {
+    private void __addOvchipkaartRelation(Reiziger reiziger) {
         ArrayList<OVChipkaart> ovChipkaarten = ovChipkaartDAO.findByReiziger( reiziger );
         if (!ovChipkaarten.isEmpty()) {
             reiziger.setOvChipkaartList(ovChipkaarten);
         }
-
-        return reiziger;
     }
 
     private Reiziger __findById(int id, Adres adres) {
@@ -193,7 +196,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
             Reiziger reiziger = null;
             if ( rs.next() ) {
-                reiziger =  this.__retrieveResultset(rs, adres);
+                reiziger =  this.__retrieveResultSet(rs, adres);
             }
 
             pst.close();
@@ -202,12 +205,12 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
 
         } catch(Exception err) {
-            System.err.println("ReizigersDAOsql geeft een error in __findbyid(): " + err.getMessage() + " " + err.getStackTrace() );
+            this.printErr(err);
             return null;
         }
     }
 
-    private Reiziger __retrieveResultset(ResultSet rs, Adres adres)  {
+    private Reiziger __retrieveResultSet(ResultSet rs, Adres adres)  {
         Reiziger reiziger = null;
         try {
             reiziger = new Reiziger(
@@ -225,8 +228,13 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             this.__addOvchipkaartRelation(reiziger);
 
         } catch (Exception err) {
-            System.err.println("ReizigersDAOsql geeft een error in __retrieveResultSet(): " + err.getMessage() + " " +  err.getStackTrace());
+            this.printErr(err);
         }
         return reiziger;
+    }
+
+    private void printErr(Exception err) {
+        String className = "" + this.getClass();
+        GenerateException.printError(className, err);
     }
 }

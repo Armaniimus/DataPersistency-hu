@@ -1,3 +1,5 @@
+package domain;
+
 public class Adres {
     private int    id;
     private String huisnummer;
@@ -37,13 +39,13 @@ public class Adres {
     }
 
     public String toString() {
-        String adresStr = "Adres{ ";
+        String adresStr = "domain.Adres{ ";
         adresStr += this.__internalGetInfo() + ", ";
 
         if (reizigerObj == null) {
             adresStr += "NULL";
         } else {
-            adresStr += "Reiziger" + this.reizigerObj.getInfo();
+            adresStr += "domain.Reiziger" + this.reizigerObj.getInfo();
         }
 
         adresStr += " }";
