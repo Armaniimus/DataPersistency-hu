@@ -129,7 +129,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next() ) {
-                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs,  reiziger);
+                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs);
                 OVChipkaartArray.add(ovChipkaart);
             }
             rs.close();
@@ -156,7 +156,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next() ) {
-                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs,  null);
+                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs);
                 OVChipkaartArray.add(ovChipkaart);
             }
             rs.close();
@@ -175,7 +175,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             ResultSet rs = st.executeQuery("select * from ov_chipkaart");
 
             while (rs.next()) {
-                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs, null);
+                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs);
                 OVChipkaartArray.add(ovChipkaart);
             }
             rs.close();
@@ -196,7 +196,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
 
             OVChipkaart ovChipkaart = null;
             if (rs.next() ) {
-                ovChipkaart = this.__retrieveResultSet(rs, null);
+                ovChipkaart = this.__retrieveResultSet(rs);
             }
             rs.close();
             pst.close();
@@ -214,7 +214,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         ovChipkaart.setReiziger(reiziger);
     }
 
-    private OVChipkaart __retrieveResultSet(ResultSet rs, Reiziger reiziger)  {
+    private OVChipkaart __retrieveResultSet(ResultSet rs)  {
         OVChipkaart ovChipkaart = null;
         try {
             ovChipkaart = new OVChipkaart(
@@ -223,12 +223,10 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
                 rs.getInt("klasse"),
                 rs.getDouble("saldo"),
                 rs.getInt("reiziger_id"),
-                reiziger
+                null
             );
+            __addRelations(ovChipkaart);
 
-            if (reiziger == null) {
-                __addRelations(ovChipkaart);
-            }
         } catch (Exception err) {
             this.printErr(err);
         }

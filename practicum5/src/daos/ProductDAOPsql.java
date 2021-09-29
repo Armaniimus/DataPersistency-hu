@@ -15,9 +15,9 @@ public class ProductDAOPsql implements ProductDAO {
     private final Connection connection;
     private final OVChipkaartDAOPsql ovChipkaartDAO;
 
-    public ProductDAOPsql ( Connection localConnection, OVChipkaartDAOPsql localOvDao) {
+    public ProductDAOPsql ( Connection localConnection, OVChipkaartDAOPsql ovChipkaartDAO) {
         this.connection = localConnection;
-        this.ovChipkaartDAO = localOvDao;
+        this.ovChipkaartDAO = ovChipkaartDAO;
     }
 
     public boolean save(Product product) {
@@ -41,7 +41,7 @@ public class ProductDAOPsql implements ProductDAO {
     public boolean saveList(ArrayList<Product> productArrayList) {
         try {
             if ( productArrayList == null || productArrayList.isEmpty() ) {
-                throw new Exception("domain.Product Arraylist is invalid");
+                throw new Exception("Product Arraylist is invalid");
             }
 
             for (Product product : productArrayList) {
@@ -75,7 +75,7 @@ public class ProductDAOPsql implements ProductDAO {
     public boolean updateList(ArrayList<Product> productArrayList) {
         try {
             if ( productArrayList == null || productArrayList.isEmpty() ) {
-                throw new Exception("domain.Product Arraylist is invalid");
+                throw new Exception("Product Arraylist is invalid");
             }
 
             for (Product product : productArrayList) {
@@ -106,7 +106,7 @@ public class ProductDAOPsql implements ProductDAO {
     public boolean deleteList(ArrayList<Product> productArrayList) {
         try {
             if ( productArrayList == null || productArrayList.isEmpty() ) {
-                throw new Exception("domain.Product Arraylist is invalid");
+                throw new Exception("Product Arraylist is invalid");
             }
 
             for (Product product : productArrayList) {
