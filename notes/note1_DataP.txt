@@ -1,0 +1,41 @@
+jenkins software builder
+deployment server
+
+master
+  acceptatie
+    test
+      feature1
+      feature2
+      feature3
+      feature4
+      
+
+functies met kleine letter
+gebruik standaard setters en getters
+gebruik namen die iets zeggen over de functie
+method Jdoc /**
+  description
+  @param
+  @return
+  @since <optional>
+  @throws <only when it throws something>
+  @deprecated <optional>
+*/
+
+Class jdoc /**
+  description
+  @author <optional>
+  @version <optional>
+  @since <optional>
+  @deprecated <optional>
+*/
+
+Use packages to group your classes
+
+defensive programming
+initializeer bij het declareren
+
+
+super() constructor van de parent
+this() constructor van eigen classe
+
