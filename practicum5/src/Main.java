@@ -92,15 +92,10 @@ public class Main {
         String geldigTot = "2088-03-14";
 
         Reiziger sietske = new Reiziger(77, "S", "", "Boers", Date.valueOf(geboorteDatum));
-        Adres sietskeAdres = new Adres(42,"Sietskedreef", "45", "Utrecht", "6060DE", 70 );
-        sietskeAdres.setReiziger(sietske, false);
-
+        Adres sietskeAdres = new Adres(42,"Sietskedreef", "45", "Utrecht", "6060DE", 77 );
         OVChipkaart sietskeOv = new OVChipkaart(6666, Date.valueOf(geldigTot), 1, 19.50,77);
-        sietskeOv.setReiziger(sietske, false);
-
 
         ovkaartArrayList.add(sietskeOv);
-
         sietske.setAdres(sietskeAdres, false);
         sietske.setOvChipkaartList( ovkaartArrayList, false );
 

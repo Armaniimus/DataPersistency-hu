@@ -15,10 +15,10 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     private final AdresDAOPsql adresDAO;
     private final OVChipkaartDAOPsql ovChipkaartDAO;
 
-    public ReizigerDAOPsql(Connection connection, AdresDAOPsql localAdao, OVChipkaartDAOPsql localOdao) {
+    public ReizigerDAOPsql(Connection connection, AdresDAOPsql localAdresDAO, OVChipkaartDAOPsql localOvChipkaartDAO) {
         this.connection = connection;
-        this.adresDAO = localAdao;
-        this.ovChipkaartDAO = localOdao;
+        this.adresDAO = localAdresDAO;
+        this.ovChipkaartDAO = localOvChipkaartDAO;
     }
 
     public boolean save(Reiziger reiziger) {
@@ -57,7 +57,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                 throw new Exception("update heeft geen OvChipkaart list object");
 
             } else if (reiziger.getAdres() == null) {
-                throw new Exception("update heeft geen domain.Adres object");
+                throw new Exception("update heeft geen Adres object");
 
             } else {
                 String q = "UPDATE reiziger SET voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboorteDatum = ? WHERE reiziger_id=?";
