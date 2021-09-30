@@ -176,14 +176,14 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     private void __addAdresRelation(Reiziger reiziger) {
         Adres adres = adresDAO.findByReiziger( reiziger );
         if (adres != null) {
-            reiziger.setAdres(adres);
+            reiziger.setAdres(adres, false);
         }
     }
 
     private void __addOvchipkaartRelation(Reiziger reiziger) {
         ArrayList<OVChipkaart> ovChipkaarten = ovChipkaartDAO.findByReiziger( reiziger );
         if (!ovChipkaarten.isEmpty()) {
-            reiziger.setOvChipkaartList(ovChipkaarten);
+            reiziger.setOvChipkaartList(ovChipkaarten, false);
         }
     }
 
@@ -218,12 +218,13 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                 rs.getString("voorletters"),
                 rs.getString("tussenvoegsel"),
                 rs.getString("achternaam"),
-                rs.getDate("geboorteDatum"),
-                null
+                rs.getDate("geboorteDatum")
             );
 
             if (adres == null) {
                 this.__addAdresRelation(reiziger);
+            } else {
+                reiziger.setAdres(adres, false);
             }
             this.__addOvchipkaartRelation(reiziger);
 

@@ -130,7 +130,7 @@ public class ProductDAOPsql implements ProductDAO {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next() ) {
-                Product product = this.__retrieveResultSet(rs);
+                Product product = this.__retrieveResultSet(rs, ovChipkaart);
                 productArrayList.add(product);
             }
             rs.close();
@@ -151,7 +151,7 @@ public class ProductDAOPsql implements ProductDAO {
             ResultSet rs = pst.executeQuery();
 
             if (rs.next() ) {
-                product = this.__retrieveResultSet(rs);
+                product = this.__retrieveResultSet(rs, null);
             }
             rs.close();
             pst.close();
@@ -170,7 +170,7 @@ public class ProductDAOPsql implements ProductDAO {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next() ) {
-                Product product = this.__retrieveResultSet(rs);
+                Product product = this.__retrieveResultSet(rs, null);
                 productArrayList.add(product);
             }
             rs.close();
@@ -184,10 +184,10 @@ public class ProductDAOPsql implements ProductDAO {
 
     private void __addRelations(Product product ) {
         ArrayList<OVChipkaart> ovChipkaartList = ovChipkaartDAO.findByProduct( product );
-        product.setOvChipkaartList(ovChipkaartList);
+        product.setOvChipkaartList(ovChipkaartList, false);
     }
 
-    private Product __retrieveResultSet(ResultSet rs)  {
+    private Product __retrieveResultSet(ResultSet rs, OVChipkaart ovChipkaart)  {
         Product product = null;
         try {
             product = new Product(
@@ -196,7 +196,14 @@ public class ProductDAOPsql implements ProductDAO {
                 rs.getString("beschrijving"),
                 rs.getDouble("prijs")
             );
-            __addRelations(product);
+
+            if (ovChipkaart == null) {
+                __addRelations(product);
+            } else {
+                ArrayList<OVChipkaart> ovChipkaartList = new ArrayList();
+                ovChipkaartList.add(ovChipkaart);
+                product.setOvChipkaartList(ovChipkaartList, false);
+            }
 
         } catch (Exception err) {
             this.printErr(err);
