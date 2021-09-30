@@ -24,14 +24,14 @@ public class Product {
                 if (i > 1) {
                     OvChipkaartListString += ", ";
                 }
-                OvChipkaartListString += " OvChipkaart" + this.OvChipkaartList.get(i).getInfo();
+                OvChipkaartListString += " OvChipkaart" + this.OvChipkaartList.get(i).getInfoFromProduct();
             }
             OvChipkaartListString += " ]";
         } else {
             OvChipkaartListString = "null";
         }
 
-        String resultString = "domain.Product{ ";
+        String resultString = "Product{ ";
         resultString += __internalGetInfo() + ", ";
         resultString += OvChipkaartListString;
         resultString += " }";
@@ -65,5 +65,15 @@ public class Product {
     public void setPrijs(Double prijs) { this.prijs = prijs; }
 
     public ArrayList<OVChipkaart> getOvChipkaartList() { return OvChipkaartList; }
-    public void setOvChipkaartList(ArrayList<OVChipkaart> ovChipkaartList) { OvChipkaartList = ovChipkaartList; }
+    public void setOvChipkaartList(ArrayList<OVChipkaart> ovChipkaartList, boolean relationCalled) {
+        this.OvChipkaartList = ovChipkaartList;
+
+        for (OVChipkaart ovChipkaart : this.OvChipkaartList) {
+            ArrayList<Product> productList = new ArrayList();
+            productList.add(this);
+            ovChipkaart.setProductList(productList, true);
+        }
+    }
+
+
 }
