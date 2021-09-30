@@ -91,15 +91,18 @@ public class Main {
         String geboorteDatum = "1981-03-14";
         String geldigTot = "2088-03-14";
 
-        Reiziger sietske = new Reiziger(77, "S", "", "Boers", Date.valueOf(geboorteDatum), null);
-        Adres sietskeAdres = new Adres(42,"Sietskedreef", "45", "Utrecht", "6060DE", 77, sietske );
-        OVChipkaart sietskeOv = new OVChipkaart(6666, Date.valueOf(geldigTot), 1, 19.50,77, sietske);
+        Reiziger sietske = new Reiziger(77, "S", "", "Boers", Date.valueOf(geboorteDatum));
+        Adres sietskeAdres = new Adres(42,"Sietskedreef", "45", "Utrecht", "6060DE", 70 );
+        sietskeAdres.setReiziger(sietske, false);
+
+        OVChipkaart sietskeOv = new OVChipkaart(6666, Date.valueOf(geldigTot), 1, 19.50,77);
+        sietskeOv.setReiziger(sietske, false);
 
 
         ovkaartArrayList.add(sietskeOv);
 
-        sietske.setAdres(sietskeAdres);
-        sietske.setOvChipkaartList( ovkaartArrayList );
+        sietske.setAdres(sietskeAdres, false);
+        sietske.setOvChipkaartList( ovkaartArrayList, false );
 
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
         reizigerDAO.save(sietske);
@@ -152,7 +155,7 @@ public class Main {
     private static void testAdresDAO() {
         if (reizigerDAO.findById(6) == null) {
             String geboorteDatum2 = "1981-03-14";
-            Reiziger test = new Reiziger(6, "t", "est", " voor adres", Date.valueOf(geboorteDatum2), null);
+            Reiziger test = new Reiziger(6, "t", "est", " voor adres", Date.valueOf(geboorteDatum2));
             reizigerDAO.save(test);
         }
 
@@ -166,7 +169,7 @@ public class Main {
 
     private static void testAdresSave() {
         ArrayList<Adres> adressen = adresDAO.findAll();
-        Adres newAdres = new Adres(20, "Toetsenbordlaan", "45", "Utrecht", "5654DE", 6, null);
+        Adres newAdres = new Adres(20, "Toetsenbordlaan", "45", "Utrecht", "5654DE", 6);
         System.out.print("[Test] Eerst " + adressen.size() + " adressen, na AdresDAO.save() ");
         adresDAO.save(newAdres);
 
@@ -236,7 +239,7 @@ public class Main {
 
     private static void testOvchipkaartSave() {
         ArrayList<OVChipkaart> OVChipkaarten = ovChipkaartDAO.findAll();
-        OVChipkaart newOv = new OVChipkaart(0,Date.valueOf("2022-12-01"), 1, 25.50, 2, null );
+        OVChipkaart newOv = new OVChipkaart(0,Date.valueOf("2022-12-01"), 1, 25.50, 2 );
         System.out.print("[Test] Eerst " + OVChipkaarten.size() + " ovChipkaarten, na OvchipkaartDAO.save() ");
         ovChipkaartDAO.save(newOv);
         OVChipkaarten = ovChipkaartDAO.findAll();
@@ -287,6 +290,7 @@ public class Main {
     }
 
     private static void testProductDAO() {
+        System.out.println("\n---------- Test ProductDAO -------------");
         testProductFindAll();
         testProductSave();
         testProductUpdate();
@@ -297,10 +301,8 @@ public class Main {
      * find all product
      */
     private static void testProductFindAll() {
-        System.out.println("\n---------- Test ProductDAO -------------");
-
         ArrayList<Product> producten = productDAO.findAll();
-        System.out.println("[Test] AdresDAO.findAll() geeft de volgende adressen:");
+        System.out.println("[Test] ProductDAO.findAll() geeft de volgende producten:");
         for (Product a : producten) {
             System.out.println(a);
         }
@@ -313,10 +315,10 @@ public class Main {
     private static void testProductSave() {
         ArrayList<Product> producten = productDAO.findAll();
         Product oldPeopleProduct = new Product(7, "Oude van dagen pakket", "gratis reizen voor iedereen die 80+ is", 0.50);
-        System.out.print("[Test] Eerst " + producten.size() + " adressen, na AdresDAO.save() ");
+        System.out.print("[Test] Eerst " + producten.size() + " producten, na ProductDao.save() ");
         productDAO.save(oldPeopleProduct);
         producten = productDAO.findAll();
-        System.out.println(producten.size() + " adressen\n");
+        System.out.println(producten.size() + " producten\n");
     }
 
     /**
