@@ -2,6 +2,7 @@ package domain;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class OVChipkaart {
@@ -11,36 +12,56 @@ public class OVChipkaart {
     private Double saldo;
     private int reizigerId;
     private Reiziger reizigerObj;
+    private ArrayList<Product> productList;
 
-    public OVChipkaart(int kaartNummer, Date geldigTot, int klasse, Double saldo, int reizigerId, Reiziger reizigerObj) {
+    public OVChipkaart(int kaartNummer, Date geldigTot, int klasse, Double saldo, int reizigerId) {
         this.kaartNummer = kaartNummer;
         this.geldigTot = geldigTot;
         this.klasse = klasse;
         this.saldo = saldo;
         this.reizigerId = reizigerId;
-
-        if (reizigerObj != null) {
-            this.reizigerObj = reizigerObj;
-        }
     }
 
     public String toString() {
-        String string = "OvChipkaart{ ";
-
-        string += __internalGetInfo() + ", ";
+        String reizigerStr = "";
         if (this.reizigerObj != null) {
-            string += "domain.Reiziger" + this.reizigerObj.getInfo();
+            reizigerStr += "Reiziger" + this.reizigerObj.getInfoFromOvchipkaart();
         } else {
-            string += "null";
+            reizigerStr += "null";
         }
 
-        string += " }";
+        String string = "OvChipkaart{ " + this.__internalGetInfo() + ", " + reizigerStr + ", " + this.__getProductString() + " }";;
+
         return string;
     }
 
-    public String getInfo() {
-        return  "{ " + this.__internalGetInfo() + " }";
+    public String getInfoFromReiziger() {
+        return  "{ " + this.__internalGetInfo() + ", " + this.__getProductString() + " }";
     }
+
+    private String __getProductString() {
+        String productListString = "";
+        if (this.productList != null && !this.productList.isEmpty()) {
+            productListString += "ProductList[";
+            for (int i = 0; i <this.productList.size(); i++) {
+                if (i > 1) {
+                    productListString += ", ";
+                }
+                productListString += " Product" + this.productList.get(i).getInfo();
+            }
+            productListString += " ]";
+        } else {
+            productListString = "null";
+        }
+
+        return  productListString;
+    }
+
+
+    public String getInfoFromProduct() {
+        return  "{ " + this.__internalGetInfo() + ", Reiziger" + this.reizigerObj.getInfoFromOvchipkaart() + " }";
+    }
+
 
     private String __internalGetInfo() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -72,5 +93,26 @@ public class OVChipkaart {
     public void setReizigerId(int reizigerId) {this.reizigerId = reizigerId;}
 
     public Reiziger getReiziger() {return reizigerObj;}
-    public void setReiziger(Reiziger reizigerObj) {this.reizigerObj = reizigerObj;}
+    public void setReiziger(Reiziger reizigerObj, boolean relationCalled) {
+        this.reizigerObj = reizigerObj;
+
+        if (!relationCalled) {
+            ArrayList<OVChipkaart> ovChipkaartList = new ArrayList();
+            ovChipkaartList.add(this);
+            this.reizigerObj.setOvChipkaartList(ovChipkaartList, true);
+        }
+    }
+
+    public ArrayList<Product> getProductList() {return productList;}
+    public void setProductList(ArrayList<Product> productList, boolean relationCalled) {
+        this.productList = productList;
+
+        if (!relationCalled) {
+            for (Product product : this.productList) {
+                ArrayList<OVChipkaart> ovChipkaartList = new ArrayList();
+                ovChipkaartList.add(this);
+                product.setOvChipkaartList(ovChipkaartList, true);
+            }
+        }
+    }
 }

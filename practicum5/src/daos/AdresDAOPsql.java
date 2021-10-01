@@ -87,7 +87,7 @@ public class AdresDAOPsql implements AdresDAO {
 
             Adres adres = null;
             if (rs.next()) {
-                adres = __retrieveResultSet(rs, null);
+                adres = __retrieveResultSet(rs, reiziger);
             }
             rs.close();
             pst.close();
@@ -149,13 +149,15 @@ public class AdresDAOPsql implements AdresDAO {
                 rs.getString("huisnummer"),
                 rs.getString("woonplaats"),
                 rs.getString("postcode"),
-                rs.getInt("reiziger_id"),
-                reiziger
+                rs.getInt("reiziger_id")
             );
 
             if (reiziger == null) {
                 __addRelations(adres);
+            } else {
+                adres.setReiziger(reiziger, false);
             }
+
         } catch (Exception err) {
             this.printErr(err);
         }
@@ -164,7 +166,7 @@ public class AdresDAOPsql implements AdresDAO {
 
     private void __addRelations(Adres adres) {
         Reiziger reiziger = reizigerDAO.findByAdres(adres);
-        adres.setReiziger(reiziger);
+        adres.setReiziger(reiziger, false);
     }
 
     private void printErr(Exception err) {

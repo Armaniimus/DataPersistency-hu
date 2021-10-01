@@ -20,6 +20,15 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     public void setProductDAO(ProductDAOPsql productDAO) { this.productDAO = productDAO; }
 
     public boolean save(OVChipkaart ovChipkaart) {
+        if ( this.__save(ovChipkaart) ) {
+            if ( productDAO.saveList(ovChipkaart.getProductList()) ) {
+                return reizigerDAO.save(ovChipkaart.getReiziger());
+            }
+        }
+        return false;
+    }
+
+    private boolean __save(OVChipkaart ovChipkaart) {
         try {
             String q = "INSERT INTO ov_chipkaart (kaart_nummer, geldig_tot, klasse, saldo, reiziger_id) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement pst = this.connection.prepareStatement(q);
@@ -45,7 +54,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             }
 
             for (OVChipkaart ovChipkaart : ovChipkaartList) {
-                this.save(ovChipkaart);
+                this.__save(ovChipkaart);
             }
             return true;
         } catch(Exception err) {
@@ -54,7 +63,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         }
     }
 
-    public boolean update(OVChipkaart ovChipkaart) {
+    private boolean __update(OVChipkaart ovChipkaart) {
         try {
             String q = "UPDATE ov_chipkaart SET geldig_tot=?, klasse=?, saldo=? WHERE kaart_nummer=?;";
             PreparedStatement pst = this.connection.prepareStatement(q);
@@ -73,6 +82,15 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         }
     }
 
+    public boolean update(OVChipkaart ovChipkaart) {
+        if ( this.__update(ovChipkaart) ) {
+            if ( productDAO.updateList(ovChipkaart.getProductList()) ) {
+                return reizigerDAO.update(ovChipkaart.getReiziger());
+            }
+        }
+        return false;
+    }
+
     public boolean updateList(ArrayList<OVChipkaart> ovChipkaartArrayList) {
         try {
             if ( ovChipkaartArrayList == null || ovChipkaartArrayList.isEmpty() ) {
@@ -80,7 +98,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             }
 
             for (OVChipkaart ovChipkaart : ovChipkaartArrayList) {
-                this.update(ovChipkaart);
+                this.__update(ovChipkaart);
             }
             return true;
         } catch(Exception err) {
@@ -91,11 +109,31 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
 
     public boolean delete(OVChipkaart ovChipkaart) {
         try {
-            String q = "DELETE FROM ov_chipkaart WHERE kaart_nummer=?;";
+            if ( this.deleteLink(ovChipkaart) ) {
+                String q = "DELETE FROM ov_chipkaart WHERE kaart_nummer=?;";
+                PreparedStatement pst = this.connection.prepareStatement(q);
+                pst.setInt(1, ovChipkaart.getKaartNummer() );
+                pst.execute();
+
+                pst.close();
+                return true;
+            }
+
+            throw new Exception("OvChipkaart links could not be deleted");
+
+        } catch(Exception err) {
+            this.printErr(err);
+            return false;
+        }
+    }
+
+    private boolean deleteLink(OVChipkaart ovChipkaart) {
+        try {
+            String q = "DELETE FROM ov_chipkaart_product WHERE kaart_nummer=?";
             PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1, ovChipkaart.getKaartNummer() );
-            pst.execute();
 
+            pst.execute();
             pst.close();
             return true;
         } catch(Exception err) {
@@ -129,7 +167,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next() ) {
-                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs);
+                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs, reiziger);
                 OVChipkaartArray.add(ovChipkaart);
             }
             rs.close();
@@ -156,7 +194,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next() ) {
-                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs);
+                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs, product);
                 OVChipkaartArray.add(ovChipkaart);
             }
             rs.close();
@@ -175,7 +213,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             ResultSet rs = st.executeQuery("select * from ov_chipkaart");
 
             while (rs.next()) {
-                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs);
+                OVChipkaart ovChipkaart = this.__retrieveResultSet(rs, true);
                 OVChipkaartArray.add(ovChipkaart);
             }
             rs.close();
@@ -196,7 +234,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
 
             OVChipkaart ovChipkaart = null;
             if (rs.next() ) {
-                ovChipkaart = this.__retrieveResultSet(rs);
+                ovChipkaart = this.__retrieveResultSet(rs, true);
             }
             rs.close();
             pst.close();
@@ -210,28 +248,65 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     }
 
     private void __addRelations(OVChipkaart ovChipkaart) {
-        Reiziger reiziger = reizigerDAO.findByOVChipkaart(ovChipkaart);
-        ovChipkaart.setReiziger(reiziger);
+        this.__addReizigerRelation(ovChipkaart);
+        this.__addProductRelation(ovChipkaart);
     }
 
-    private OVChipkaart __retrieveResultSet(ResultSet rs)  {
+    private void __addReizigerRelation(OVChipkaart ovChipkaart) {
+        Reiziger reiziger = reizigerDAO.findByOVChipkaart(ovChipkaart);
+        ovChipkaart.setReiziger(reiziger, false);
+    }
+
+    private void __addProductRelation(OVChipkaart ovChipkaart) {
+        ovChipkaart.setProductList( productDAO.findByOVChipkaart(ovChipkaart), false );
+    }
+
+    private OVChipkaart __retrieveResultSet(ResultSet rs, Product product)  {
+        OVChipkaart ovChipkaart=  this.__retrieveResultSet(rs, false);
+        if (product == null) {
+            System.err.println("Product is null");
+            this.__addReizigerRelation(ovChipkaart);
+        }
+        ArrayList<Product> productList = new ArrayList();
+        productList.add(product);
+        ovChipkaart.setProductList(productList, false);
+
+        this.__addReizigerRelation(ovChipkaart);
+
+        return ovChipkaart;
+    }
+
+    private OVChipkaart __retrieveResultSet(ResultSet rs, Reiziger reiziger)  {
+        OVChipkaart ovChipkaart=  this.__retrieveResultSet(rs, false);
+        if (reiziger == null) {
+            System.err.println("reiziger is null");
+            this.__addReizigerRelation(ovChipkaart);
+        }
+        this.__addProductRelation(ovChipkaart);
+
+        return ovChipkaart;
+    }
+
+    private OVChipkaart __retrieveResultSet(ResultSet rs, boolean withRelations)  {
         OVChipkaart ovChipkaart = null;
         try {
             ovChipkaart = new OVChipkaart(
-                rs.getInt("kaart_nummer"),
-                rs.getDate("geldig_tot"),
-                rs.getInt("klasse"),
-                rs.getDouble("saldo"),
-                rs.getInt("reiziger_id"),
-                null
+                    rs.getInt("kaart_nummer"),
+                    rs.getDate("geldig_tot"),
+                    rs.getInt("klasse"),
+                    rs.getDouble("saldo"),
+                    rs.getInt("reiziger_id")
             );
-            __addRelations(ovChipkaart);
+            if (withRelations) {
+                this.__addRelations(ovChipkaart);
+            }
 
         } catch (Exception err) {
             this.printErr(err);
         }
         return ovChipkaart;
     }
+
     private void printErr(Exception err) {
         String className = "" + this.getClass();
         GenerateException.printError(className, err);

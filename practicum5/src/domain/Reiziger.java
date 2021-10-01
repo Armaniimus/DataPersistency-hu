@@ -12,19 +12,14 @@ public class Reiziger {
     private String achternaam;
     private Date geboorteDatum;
     private Adres adresObj;
-    private ArrayList<OVChipkaart> OvChipkaartList;
+    private ArrayList<OVChipkaart> ovChipkaartList;
 
-    public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboorteDatum, Adres adres) {
+    public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboorteDatum) {
         this.id = id;
         this.voorletters = voorletters;
         this.tussenvoegsel = tussenvoegsel;
         this.achternaam = achternaam;
         this.geboorteDatum = geboorteDatum;
-        this.adresObj = adres;
-
-        if (this.adresObj != null) {
-            this.adresObj.setReiziger(this);
-        }
     }
 
     public String getName() {
@@ -39,26 +34,26 @@ public class Reiziger {
         String AdresObjString = "";
 
         if (this.adresObj != null) {
-            AdresObjString += "domain.Adres" + this.adresObj.getInfo();
+            AdresObjString += "Adres" + this.adresObj.getInfo();
         } else {
             AdresObjString += "null";
         }
 
         String OvChipkaartListString = "";
-        if (this.OvChipkaartList != null && !this.OvChipkaartList.isEmpty()) {
+        if (this.ovChipkaartList != null && !this.ovChipkaartList.isEmpty()) {
             OvChipkaartListString += "OvChipkaartenList[";
-            for (int i=0; i <this.OvChipkaartList.size(); i++) {
+            for (int i = 0; i <this.ovChipkaartList.size(); i++) {
                 if (i > 1) {
                     OvChipkaartListString += ", ";
                 }
-                OvChipkaartListString += " OvChipkaart" + this.OvChipkaartList.get(i).getInfo();
+                OvChipkaartListString += " OvChipkaart" + this.ovChipkaartList.get(i).getInfoFromReiziger();
             }
             OvChipkaartListString += " ]";
         } else {
             OvChipkaartListString = "null";
         }
 
-        String resultString = "domain.Reiziger{ ";
+        String resultString = "Reiziger{ ";
         resultString += __internalGetInfo() + ", ";
         resultString += AdresObjString + ", ";
         resultString += OvChipkaartListString;
@@ -67,8 +62,30 @@ public class Reiziger {
         return resultString;
     }
 
-    public String getInfo() {
-        return  "{ " + this.__internalGetInfo() + " }";
+//    public String getInfo() {
+//        return  "{ " + this.__internalGetInfo() + " }";
+//    }
+
+    public String getInfoFromAdres() {
+        String OvChipkaartListString = "";
+        if (this.ovChipkaartList != null && !this.ovChipkaartList.isEmpty()) {
+            OvChipkaartListString += "OvChipkaartenList[";
+            for (int i = 0; i <this.ovChipkaartList.size(); i++) {
+                if (i > 1) {
+                    OvChipkaartListString += ", ";
+                }
+                OvChipkaartListString += " OvChipkaart" + this.ovChipkaartList.get(i).getInfoFromReiziger();
+            }
+            OvChipkaartListString += " ]";
+        } else {
+            OvChipkaartListString = "null";
+        }
+
+        return  "{ " + this.__internalGetInfo() + OvChipkaartListString + " }";
+    }
+
+    public String getInfoFromOvchipkaart() {
+        return  "{ " + this.__internalGetInfo() + " Adres" + adresObj.getInfo() + " }";
     }
 
     private String __internalGetInfo() {
@@ -119,13 +136,23 @@ public class Reiziger {
         return geboorteDatum;
     }
 
-    public void setAdres(Adres adresObj) {
+    public void setAdres(Adres adresObj, boolean relationCalled) {
         this.adresObj = adresObj;
+        if (!relationCalled){
+            this.adresObj.setReiziger(this, true);
+        }
     }
     public Adres getAdres() {
         return adresObj;
     }
 
-    public void setOvChipkaartList(ArrayList<OVChipkaart> ovChipkaartList) { this.OvChipkaartList = ovChipkaartList;}
-    public ArrayList<OVChipkaart> getOvChipkaartList() {return this.OvChipkaartList;}
+    public void setOvChipkaartList(ArrayList<OVChipkaart> ovChipkaartList, boolean relationCalled) {
+        this.ovChipkaartList = ovChipkaartList;
+        if (!relationCalled) {
+            for (OVChipkaart ovChipkaart : this.ovChipkaartList) {
+                ovChipkaart.setReiziger(this, true);
+            }
+        }
+    }
+    public ArrayList<OVChipkaart> getOvChipkaartList() {return this.ovChipkaartList;}
 }

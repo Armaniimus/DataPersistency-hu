@@ -21,6 +21,13 @@ public class ProductDAOPsql implements ProductDAO {
     }
 
     public boolean save(Product product) {
+        if ( this.__save(product) ) {
+            this.ovChipkaartDAO.saveList(product.getOvChipkaartList());
+        }
+        return false;
+    }
+
+    private boolean __save(Product product) {
         try {
             String q = "INSERT INTO product (product_nummer, naam, beschrijving, prijs) VALUES (?, ?, ?, ?)";
             PreparedStatement pst = this.connection.prepareStatement(q);
@@ -45,7 +52,7 @@ public class ProductDAOPsql implements ProductDAO {
             }
 
             for (Product product : productArrayList) {
-                this.save(product);
+                this.__save(product);
             }
             return true;
         } catch(Exception err) {
@@ -54,7 +61,7 @@ public class ProductDAOPsql implements ProductDAO {
         }
     }
 
-    public boolean update(Product product) {
+    private boolean __update(Product product) {
         try {
             String q = "UPDATE product SET naam=?, beschrijving=?, prijs=? WHERE product_nummer=?;";
             PreparedStatement pst = this.connection.prepareStatement(q);
@@ -72,6 +79,15 @@ public class ProductDAOPsql implements ProductDAO {
         }
     }
 
+
+
+    public boolean update(Product product) {
+        if ( this.__update(product) ) {
+            return this.ovChipkaartDAO.updateList( product.getOvChipkaartList() );
+        }
+        return false;
+    }
+
     public boolean updateList(ArrayList<Product> productArrayList) {
         try {
             if ( productArrayList == null || productArrayList.isEmpty() ) {
@@ -79,7 +95,7 @@ public class ProductDAOPsql implements ProductDAO {
             }
 
             for (Product product : productArrayList) {
-                this.update(product);
+                this.__update(product);
             }
             return true;
         } catch(Exception err) {
@@ -90,7 +106,25 @@ public class ProductDAOPsql implements ProductDAO {
 
     public boolean delete(Product product) {
         try {
-            String q = "DELETE FROM product WHERE product_nummer=?";
+            if (this.deleteLink(product)) {
+                String q = "DELETE FROM product WHERE product_nummer=?";
+                PreparedStatement pst = this.connection.prepareStatement(q);
+                pst.setInt(1, product.getProduct_nummer() );
+
+                pst.execute();
+                pst.close();
+                return true;
+            }
+            throw new Exception("productLinks could not be deleted");
+        } catch(Exception err) {
+            this.printErr(err);
+            return false;
+        }
+    }
+
+    private boolean deleteLink(Product product) {
+        try {
+            String q = "DELETE FROM ov_chipkaart_product WHERE product_nummer=?";
             PreparedStatement pst = this.connection.prepareStatement(q);
             pst.setInt(1, product.getProduct_nummer() );
 
@@ -130,7 +164,7 @@ public class ProductDAOPsql implements ProductDAO {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next() ) {
-                Product product = this.__retrieveResultSet(rs);
+                Product product = this.__retrieveResultSet(rs, ovChipkaart);
                 productArrayList.add(product);
             }
             rs.close();
@@ -151,7 +185,7 @@ public class ProductDAOPsql implements ProductDAO {
             ResultSet rs = pst.executeQuery();
 
             if (rs.next() ) {
-                product = this.__retrieveResultSet(rs);
+                product = this.__retrieveResultSet(rs, null);
             }
             rs.close();
             pst.close();
@@ -170,7 +204,7 @@ public class ProductDAOPsql implements ProductDAO {
             ResultSet rs = pst.executeQuery();
 
             while (rs.next() ) {
-                Product product = this.__retrieveResultSet(rs);
+                Product product = this.__retrieveResultSet(rs, null);
                 productArrayList.add(product);
             }
             rs.close();
@@ -184,10 +218,10 @@ public class ProductDAOPsql implements ProductDAO {
 
     private void __addRelations(Product product ) {
         ArrayList<OVChipkaart> ovChipkaartList = ovChipkaartDAO.findByProduct( product );
-        product.setOvChipkaartList(ovChipkaartList);
+        product.setOvChipkaartList(ovChipkaartList, false);
     }
 
-    private Product __retrieveResultSet(ResultSet rs)  {
+    private Product __retrieveResultSet(ResultSet rs, OVChipkaart ovChipkaart)  {
         Product product = null;
         try {
             product = new Product(
@@ -196,7 +230,14 @@ public class ProductDAOPsql implements ProductDAO {
                 rs.getString("beschrijving"),
                 rs.getDouble("prijs")
             );
-            __addRelations(product);
+
+            if (ovChipkaart == null) {
+                __addRelations(product);
+            } else {
+                ArrayList<OVChipkaart> ovChipkaartList = new ArrayList();
+                ovChipkaartList.add(ovChipkaart);
+                product.setOvChipkaartList(ovChipkaartList, false);
+            }
 
         } catch (Exception err) {
             this.printErr(err);

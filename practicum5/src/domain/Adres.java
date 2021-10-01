@@ -9,17 +9,13 @@ public class Adres {
     private int    reizigerId;
     private Reiziger reizigerObj;
 
-    public Adres (int id, String straat, String huisnummer, String woonplaats, String postcode, int reizigerId, Reiziger reizigerObj) {
+    public Adres (int id, String straat, String huisnummer, String woonplaats, String postcode, int reizigerId) {
         this.id = id;
         this.straat = straat;
         this.huisnummer = huisnummer;
         this.woonplaats = woonplaats;
         this.postcode = postcode;
         this.reizigerId = reizigerId;
-        this.reizigerObj = reizigerObj;
-        if (reizigerObj != null) {
-            this.reizigerObj.setAdres(this);
-        }
     }
 
     private String __internalGetInfo() {
@@ -39,13 +35,13 @@ public class Adres {
     }
 
     public String toString() {
-        String adresStr = "domain.Adres{ ";
+        String adresStr = "Adres{ ";
         adresStr += this.__internalGetInfo() + ", ";
 
         if (reizigerObj == null) {
             adresStr += "NULL";
         } else {
-            adresStr += "domain.Reiziger" + this.reizigerObj.getInfo();
+            adresStr += "Reiziger" + this.reizigerObj.getInfoFromAdres();
         }
 
         adresStr += " }";
@@ -72,5 +68,10 @@ public class Adres {
     public void setReizigerId(int reizigerId) {this.reizigerId = reizigerId;}
 
     public Reiziger getReiziger() {return this.reizigerObj;}
-    public void setReiziger(Reiziger reiziger) {this.reizigerObj = reiziger;}
+    public void setReiziger(Reiziger reiziger, boolean relationCalled) {
+        this.reizigerObj = reiziger;
+        if (!relationCalled) {
+            reiziger.setAdres(this, true);
+        }
+    }
 }

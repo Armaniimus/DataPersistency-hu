@@ -15,10 +15,10 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     private final AdresDAOPsql adresDAO;
     private final OVChipkaartDAOPsql ovChipkaartDAO;
 
-    public ReizigerDAOPsql(Connection connection, AdresDAOPsql localAdao, OVChipkaartDAOPsql localOdao) {
+    public ReizigerDAOPsql(Connection connection, AdresDAOPsql localAdresDAO, OVChipkaartDAOPsql localOvChipkaartDAO) {
         this.connection = connection;
-        this.adresDAO = localAdao;
-        this.ovChipkaartDAO = localOdao;
+        this.adresDAO = localAdresDAO;
+        this.ovChipkaartDAO = localOvChipkaartDAO;
     }
 
     public boolean save(Reiziger reiziger) {
@@ -57,7 +57,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                 throw new Exception("update heeft geen OvChipkaart list object");
 
             } else if (reiziger.getAdres() == null) {
-                throw new Exception("update heeft geen domain.Adres object");
+                throw new Exception("update heeft geen Adres object");
 
             } else {
                 String q = "UPDATE reiziger SET voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboorteDatum = ? WHERE reiziger_id=?";
@@ -176,14 +176,14 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     private void __addAdresRelation(Reiziger reiziger) {
         Adres adres = adresDAO.findByReiziger( reiziger );
         if (adres != null) {
-            reiziger.setAdres(adres);
+            reiziger.setAdres(adres, false);
         }
     }
 
     private void __addOvchipkaartRelation(Reiziger reiziger) {
         ArrayList<OVChipkaart> ovChipkaarten = ovChipkaartDAO.findByReiziger( reiziger );
         if (!ovChipkaarten.isEmpty()) {
-            reiziger.setOvChipkaartList(ovChipkaarten);
+            reiziger.setOvChipkaartList(ovChipkaarten, false);
         }
     }
 
@@ -218,12 +218,13 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                 rs.getString("voorletters"),
                 rs.getString("tussenvoegsel"),
                 rs.getString("achternaam"),
-                rs.getDate("geboorteDatum"),
-                null
+                rs.getDate("geboorteDatum")
             );
 
             if (adres == null) {
                 this.__addAdresRelation(reiziger);
+            } else {
+                reiziger.setAdres(adres, false);
             }
             this.__addOvchipkaartRelation(reiziger);
 
