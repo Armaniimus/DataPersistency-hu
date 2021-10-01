@@ -1,0 +1,24 @@
+subqueries enkele cel?
+
+subqueries te gebruiken
+in WHERE HAVING en ON
+
+gebruiken =, !=, >, <
+
+
+subquery met 1 kolom
+te gebruiken in WHERE HAVING en ON
+met IN en NOT IN
+
+
+subqueries met meerdere kolommen
+te gebruiken met WHERE HAVING en ON
+met IN en NOT IN
+
+subqueries met JOINS
+te gebruiken met WHERE HAVING en ON
+met IN en NOT IN
+
+SubQueries als select kolom
+
+NOT EXISTS subquery
