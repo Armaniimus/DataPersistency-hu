@@ -8,8 +8,10 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@Table(name="reiziger")
 public class Reiziger {
     @Id
+    @Column(name = "reiziger_id")
     private int id;
     private String voorletters;
     private String tussenvoegsel;
@@ -17,12 +19,14 @@ public class Reiziger {
     private Date geboorteDatum;
 
     @OneToOne
+    @Transient
     private Adres adresObj;
 
     @OneToMany
+    @Transient
     private List<OVChipkaart> ovChipkaart;
 
-    public void Reiziger() {
+    public Reiziger() {
 
     }
 

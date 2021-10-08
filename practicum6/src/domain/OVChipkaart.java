@@ -8,30 +8,38 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@Table(name="ov_chipkaart")
 public class OVChipkaart {
     @Id
-    private int kaartNummer;
+    @Column(name = "kaart_nummer")
+    private int kaart_nummer;
+
+    @Column(name = "geldig_tot")
     private Date geldigTot;
     private int klasse;
     private Double saldo;
-    private int reizigerId;
+
+//    @Column(name = "geldig_tot")
+    private int reiziger_id;
 
     @ManyToOne
+    @Transient
     private Reiziger reiziger;
 
     @ManyToMany
+    @Transient
     private List<Product> product;
 
-    public void ovChipkaart() {
+    public OVChipkaart() {
 
     }
 
-    public OVChipkaart(int kaartNummer, Date geldigTot, int klasse, Double saldo, int reizigerId) {
-        this.kaartNummer = kaartNummer;
+    public OVChipkaart(int kaart_nummer, Date geldigTot, int klasse, Double saldo, int reiziger_id) {
+        this.kaart_nummer = kaart_nummer;
         this.geldigTot = geldigTot;
         this.klasse = klasse;
         this.saldo = saldo;
-        this.reizigerId = reizigerId;
+        this.reiziger_id = reiziger_id;
     }
 
     public String toString() {
@@ -80,17 +88,17 @@ public class OVChipkaart {
         String geldigTotStr = dateFormat.format(this.geldigTot);
 
         String string = "";
-        string += this.kaartNummer  + ", ";
+        string += this.kaart_nummer + ", ";
         string += geldigTotStr + ", ";
         string += this.klasse + ", ";
         string += this.saldo + ", ";
-        string += this.reizigerId;
+        string += this.reiziger_id;
 
         return string;
     }
 
-    public int getKaartNummer() {return kaartNummer;}
-    public void setKaartNummer(int kaartNummer) {this.kaartNummer = kaartNummer;}
+    public int getKaart_nummer() {return kaart_nummer;}
+    public void setKaart_nummer(int kaart_nummer) {this.kaart_nummer = kaart_nummer;}
 
     public Date getGeldigTot() {return geldigTot;}
     public void setGeldigTot(Date geldigTot) {this.geldigTot = geldigTot;}
@@ -101,8 +109,8 @@ public class OVChipkaart {
     public Double getSaldo() {return saldo;}
     public void setSaldo(Double saldo) {this.saldo = saldo;}
 
-    public int getReizigerId() {return reizigerId;}
-    public void setReizigerId(int reizigerId) {this.reizigerId = reizigerId;}
+    public int getReiziger_id() {return reiziger_id;}
+    public void setReiziger_id(int reiziger_id) {this.reiziger_id = reiziger_id;}
 
     public Reiziger getReiziger() {return reiziger;}
     public void setReiziger(Reiziger reizigerObj, boolean relationCalled) {

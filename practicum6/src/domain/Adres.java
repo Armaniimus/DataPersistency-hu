@@ -1,34 +1,35 @@
 package domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 
 @Entity
+@Table(name="adres")
 public class Adres {
     @Id
+    @Column(name = "adres_id")
     private int    id;
     private String huisnummer;
     private String straat;
     private String woonplaats;
     private String postcode;
-    private int    reizigerId;
+    private int reiziger_id;
 
     @OneToOne
+    @Transient
     private Reiziger reiziger;
 
-    public void Adres() {
+    public Adres() {
 
     }
 
-    public Adres (int id, String straat, String huisnummer, String woonplaats, String postcode, int reizigerId) {
+    public Adres (int id, String straat, String huisnummer, String woonplaats, String postcode, int reiziger_id) {
         this.id = id;
         this.straat = straat;
         this.huisnummer = huisnummer;
         this.woonplaats = woonplaats;
         this.postcode = postcode;
-        this.reizigerId = reizigerId;
+        this.reiziger_id = reiziger_id;
     }
 
     private String __internalGetInfo() {
@@ -38,7 +39,7 @@ public class Adres {
         adresStr += this.huisnummer + ", ";
         adresStr += this.woonplaats + ", ";
         adresStr += this.postcode + ", ";
-        adresStr += this.reizigerId;
+        adresStr += this.reiziger_id;
 
         return adresStr;
     }
@@ -77,8 +78,8 @@ public class Adres {
     public String getPostcode() {return postcode;}
     public void setPostcode(String postcode) {this.postcode = postcode;}
 
-    public int getReizigerId() {return this.reizigerId;}
-    public void setReizigerId(int reizigerId) {this.reizigerId = reizigerId;}
+    public int getReiziger_id() {return this.reiziger_id;}
+    public void setReiziger_id(int reiziger_id) {this.reiziger_id = reiziger_id;}
 
     public Reiziger getReiziger() {return this.reiziger;}
     public void setReiziger(Reiziger reiziger, boolean relationCalled) {

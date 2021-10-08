@@ -1,23 +1,24 @@
 package domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name="product")
 public class Product {
     @Id
+    @Column(name = "product_nummer")
     private int product_nummer;
     private String naam;
     private String beschrijving;
     private Double prijs;
 
     @ManyToMany
+    @Transient
     private List<OVChipkaart> ovChipkaart;
 
-    public void Product() {
+    public Product() {
 
     }
 
