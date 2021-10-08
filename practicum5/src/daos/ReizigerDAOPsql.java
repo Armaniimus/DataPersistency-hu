@@ -21,7 +21,27 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         this.ovChipkaartDAO = localOvChipkaartDAO;
     }
 
+    public boolean saveFromOv( Reiziger reiziger ) {
+        this.__save(reiziger);
+        this.adresDAO.save( reiziger.getAdres() );
+        return true;
+    }
+
+    public boolean saveFromAdres( Reiziger reiziger ) {
+        this.__save(reiziger);
+        this.adresDAO.save( reiziger.getAdres() );
+        return true;
+    }
+
+
     public boolean save(Reiziger reiziger) {
+        this.__save(reiziger);
+        this.ovChipkaartDAO.saveList( reiziger.getOvChipkaartList() );
+        this.adresDAO.save( reiziger.getAdres() );
+        return true;
+    }
+
+    private boolean __save(Reiziger reiziger) {
         try {
             if (reiziger.getOvChipkaartList() == null || reiziger.getOvChipkaartList().isEmpty() ) {
                 throw new Exception("update heeft geen valide OvChipkaart list object");
@@ -40,8 +60,6 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
                 pst.execute();
 
-                this.adresDAO.save( reiziger.getAdres() );
-                this.ovChipkaartDAO.saveList( reiziger.getOvChipkaartList() );
                 return true;
             }
 
@@ -50,6 +68,8 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             return false;
         }
     }
+
+
 
     public boolean update(Reiziger reiziger) {
         try {

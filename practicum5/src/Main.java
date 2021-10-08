@@ -216,11 +216,11 @@ public class Main {
 
     private static void testOvchipkaartDAO() {
         System.out.println("\n---------- Test OvchipkaartDAO -------------");
-        testOvchipkaartFindAll();
-        testOvchipkaartSave();
-        testOvchipkaartUpdate();
-        testOvchipkaartDelete();
-        testOvchipkaartFindByReiziger();
+//        testOvchipkaartFindAll();
+//        testOvchipkaartSave();
+//        testOvchipkaartUpdate();
+//        testOvchipkaartDelete();
+//        testOvchipkaartFindByReiziger();
     }
 
     private static void testOvchipkaartFindAll() {
@@ -233,8 +233,24 @@ public class Main {
     }
 
     private static void testOvchipkaartSave() {
+        Product oldProduct = productDAO.findById(1945);
+        if (oldProduct != null) {
+            productDAO.delete(oldProduct);
+        }
+
+        ArrayList<Product> productArrayList = new ArrayList<>();
+        Product ovProduct = new Product(1945, "", "", 14.50);
+        productArrayList.add(ovProduct);
+
+        OVChipkaart newOv = new OVChipkaart(1945,Date.valueOf("2022-12-01"), 1, 25.50, 1945 );
+        Reiziger reiziger = new Reiziger(1945, "","","", Date.valueOf("2022-12-01") );
+        Adres adres = new Adres(1945, "","", "","", 1945);
+
+        newOv.setProductList(productArrayList, false);
+        newOv.setReiziger(reiziger, false);
+        reiziger.setAdres(adres, false);
+
         ArrayList<OVChipkaart> OVChipkaarten = ovChipkaartDAO.findAll();
-        OVChipkaart newOv = new OVChipkaart(0,Date.valueOf("2022-12-01"), 1, 25.50, 2 );
         System.out.print("[Test] Eerst " + OVChipkaarten.size() + " ovChipkaarten, na OvchipkaartDAO.save() ");
         ovChipkaartDAO.save(newOv);
         OVChipkaarten = ovChipkaartDAO.findAll();
@@ -242,7 +258,7 @@ public class Main {
     }
 
     private static void testOvchipkaartUpdate() {
-        OVChipkaart newOv = ovChipkaartDAO.findByKaartNummer(0);
+        OVChipkaart newOv = ovChipkaartDAO.findByKaartNummer(1945);
 
         System.out.println("[Test] before update:" + newOv);
         newOv.setKlasse(4);
@@ -261,7 +277,7 @@ public class Main {
     private static void testOvchipkaartDelete() {
         ArrayList<OVChipkaart> OVChipkaarten = ovChipkaartDAO.findAll();
         System.out.print("[Test] Eerst " + OVChipkaarten.size() + " Ovchipkaarten, na OVChipkaartDAO.delete() ");
-        OVChipkaart newOv = ovChipkaartDAO.findByKaartNummer(0);
+        OVChipkaart newOv = ovChipkaartDAO.findByKaartNummer(1945);
         ovChipkaartDAO.delete(newOv);
         OVChipkaarten = ovChipkaartDAO.findAll();
         System.out.println(OVChipkaarten.size() + " Ovchipkaarten");
@@ -308,8 +324,25 @@ public class Main {
      * save product
      */
     private static void testProductSave() {
+        OVChipkaart oldCard = ovChipkaartDAO.findByKaartNummer(1488);
+        if (oldCard != null) {
+            ovChipkaartDAO.delete(oldCard);
+        }
+
+        OVChipkaart newOv = new OVChipkaart(1488,Date.valueOf("2022-12-01"), 1, 25.50, 2 );
+        ArrayList<OVChipkaart> ovChipkaartArray = new ArrayList();
+        ovChipkaartArray.add(newOv);
+
+        Reiziger reiziger = new Reiziger(1488, "","","", Date.valueOf("2022-12-01") );
+        newOv.setReiziger(reiziger, false);
+
+        Adres adres = new Adres(1488, "","", "","", 1488);
+        reiziger.setAdres(adres, false);
+
         ArrayList<Product> producten = productDAO.findAll();
         Product oldPeopleProduct = new Product(7, "Oude van dagen pakket", "gratis reizen voor iedereen die 80+ is", 0.50);
+
+        oldPeopleProduct.setOvChipkaartList(ovChipkaartArray, false);
         System.out.print("[Test] Eerst " + producten.size() + " producten, na ProductDao.save() ");
         productDAO.save(oldPeopleProduct);
         producten = productDAO.findAll();
@@ -321,6 +354,7 @@ public class Main {
      */
     private static void testProductUpdate() {
         Product oldPeopleProduct2 = productDAO.findById(7);
+//        oldPeopleProduct2.setOvChipkaartList(ovChipkaartArray, false);
         System.out.println("[Test] before update:" + oldPeopleProduct2);
 
         oldPeopleProduct2.setPrijs(0.00);

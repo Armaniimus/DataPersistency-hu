@@ -20,11 +20,12 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     public void setProductDAO(ProductDAOPsql productDAO) { this.productDAO = productDAO; }
 
     public boolean save(OVChipkaart ovChipkaart) {
-        if ( this.__save(ovChipkaart) ) {
-            if ( productDAO.saveList(ovChipkaart.getProductList()) ) {
-                return reizigerDAO.save(ovChipkaart.getReiziger());
-            }
+        reizigerDAO.saveFromOv(ovChipkaart.getReiziger());
+        if (this.__save(ovChipkaart) ) {
+            productDAO.saveList(ovChipkaart.getProductList());
+            return true;
         }
+
         return false;
     }
 
@@ -72,10 +73,9 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
             pst.setDouble(3, ovChipkaart.getSaldo() );
             pst.setInt(4, ovChipkaart.getKaartNummer() );
 
-            pst.execute();
-
+            Boolean result = pst.execute();
             pst.close();
-            return true;
+            return result;
         } catch(Exception err) {
             this.printErr(err);
             return false;
@@ -84,8 +84,11 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
 
     public boolean update(OVChipkaart ovChipkaart) {
         if ( this.__update(ovChipkaart) ) {
-            if ( productDAO.updateList(ovChipkaart.getProductList()) ) {
-                return reizigerDAO.update(ovChipkaart.getReiziger());
+            if ( this.productDAO.updateList(ovChipkaart.getProductList()) ) {
+                this.productDAO.__updateLink(ovChipkaart);
+                this.reizigerDAO.update(ovChipkaart.getReiziger());
+
+                return true;
             }
         }
         return false;
@@ -116,6 +119,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
                 pst.execute();
 
                 pst.close();
+
                 return true;
             }
 
@@ -291,11 +295,11 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         OVChipkaart ovChipkaart = null;
         try {
             ovChipkaart = new OVChipkaart(
-                    rs.getInt("kaart_nummer"),
-                    rs.getDate("geldig_tot"),
-                    rs.getInt("klasse"),
-                    rs.getDouble("saldo"),
-                    rs.getInt("reiziger_id")
+                rs.getInt("kaart_nummer"),
+                rs.getDate("geldig_tot"),
+                rs.getInt("klasse"),
+                rs.getDouble("saldo"),
+                rs.getInt("reiziger_id")
             );
             if (withRelations) {
                 this.__addRelations(ovChipkaart);

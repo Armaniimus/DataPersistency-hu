@@ -9,7 +9,9 @@ import lib.GenerateException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ProductDAOPsql implements ProductDAO {
     private final Connection connection;
@@ -23,6 +25,7 @@ public class ProductDAOPsql implements ProductDAO {
     public boolean save(Product product) {
         if ( this.__save(product) ) {
             this.ovChipkaartDAO.saveList(product.getOvChipkaartList());
+            this.__saveLink(product);
         }
         return false;
     }
@@ -38,6 +41,7 @@ public class ProductDAOPsql implements ProductDAO {
 
             pst.execute();
             pst.close();
+
             return true;
         } catch(Exception err) {
             this.printErr(err);
@@ -53,7 +57,9 @@ public class ProductDAOPsql implements ProductDAO {
 
             for (Product product : productArrayList) {
                 this.__save(product);
+                this.__saveLink(product);
             }
+
             return true;
         } catch(Exception err) {
             this.printErr(err);
@@ -72,6 +78,7 @@ public class ProductDAOPsql implements ProductDAO {
 
             pst.execute();
             pst.close();
+
             return true;
         } catch(Exception err) {
             this.printErr(err);
@@ -79,11 +86,12 @@ public class ProductDAOPsql implements ProductDAO {
         }
     }
 
-
-
     public boolean update(Product product) {
         if ( this.__update(product) ) {
-            return this.ovChipkaartDAO.updateList( product.getOvChipkaartList() );
+            this.ovChipkaartDAO.updateList( product.getOvChipkaartList() );
+            this.__updateLink(product);
+
+            return true;
         }
         return false;
     }
@@ -106,7 +114,7 @@ public class ProductDAOPsql implements ProductDAO {
 
     public boolean delete(Product product) {
         try {
-            if (this.deleteLink(product)) {
+            if (this.__deleteLink(product)) {
                 String q = "DELETE FROM product WHERE product_nummer=?";
                 PreparedStatement pst = this.connection.prepareStatement(q);
                 pst.setInt(1, product.getProduct_nummer() );
@@ -122,7 +130,77 @@ public class ProductDAOPsql implements ProductDAO {
         }
     }
 
-    private boolean deleteLink(Product product) {
+    private void __saveLink(Product product) {
+        try {
+            Date date = new Date();
+            java.sql.Date dateNow = new java.sql.Date(date.getTime());
+
+            ArrayList<OVChipkaart> ovChipkaartArray = product.getOvChipkaartList();
+            int product_nummer = product.getProduct_nummer();
+
+            for (int i = 0; i<ovChipkaartArray.size(); i++) {
+                String q = "INSERT INTO ov_chipkaart_product (kaart_nummer, product_nummer, status, last_update)"
+                + "VALUES (?, ?, null, ?);";
+
+                PreparedStatement pst = this.connection.prepareStatement(q);
+                pst.setInt(1, ovChipkaartArray.get(i).getKaartNummer() );
+                pst.setInt(2, product_nummer );
+                pst.setDate(3, dateNow);
+
+                pst.execute();
+                pst.close();
+            }
+        } catch(Exception err) {
+            this.printErr(err);
+        }
+    }
+
+    private void __updateLink(Product product) {
+        try {
+            this.__deleteLink(product);
+            this.__saveLink(product);
+
+        } catch(Exception err) {
+            this.printErr(err);
+        }
+    }
+
+    public void __updateLink(OVChipkaart ovChipkaart) {
+        try {
+            Date date = new Date();
+            java.sql.Date dateNow = new java.sql.Date(date.getTime());
+
+            ArrayList<Product> productArray = ovChipkaart.getProductList();
+
+            String q = "DELETE FROM ov_chipkaart_product " +
+                    "WHERE kaart_nummer = ?";
+            PreparedStatement pst = this.connection.prepareStatement(q);
+            pst.setInt(1, ovChipkaart.getKaartNummer() );
+            ResultSet rs = pst.executeQuery();
+            rs.close();
+            pst.close();
+
+
+            // insert()
+            for (int i = 0; i<productArray.size(); i++) {
+                String q2 = "INSERT INTO ov_chipkaart_product (kaart_nummer, product_nummer, status, last_update)"
+                        + "VALUES (?, ?, null, ?);";
+
+                PreparedStatement pst2 = this.connection.prepareStatement(q2);
+                pst2.setInt(1, ovChipkaart.getKaartNummer() );
+                pst2.setInt(2, productArray.get(i).getProduct_nummer() );
+                pst2.setDate(3, dateNow);
+
+                pst2.execute();
+                pst2.close();
+            }
+
+        } catch(Exception err) {
+            this.printErr(err);
+        }
+    }
+
+    private boolean __deleteLink(Product product) {
         try {
             String q = "DELETE FROM ov_chipkaart_product WHERE product_nummer=?";
             PreparedStatement pst = this.connection.prepareStatement(q);

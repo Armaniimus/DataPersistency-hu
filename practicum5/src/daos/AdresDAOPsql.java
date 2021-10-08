@@ -23,6 +23,11 @@ public class AdresDAOPsql implements AdresDAO {
     }
 
     public boolean save(Adres adres) {
+        this.__save(adres);
+        return true;
+    }
+
+    private boolean __save(Adres adres) {
         try {
             String q = "INSERT INTO adres (adres_id, postcode, huisnummer, straat, woonplaats, reiziger_id) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement pst = this.connection.prepareStatement(q);
