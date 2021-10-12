@@ -117,8 +117,8 @@ SELECT
 	salesperson_person_id AS verkoper,
 	ABS(expected_delivery_date - order_date) AS levertijd,
 	quantity
-FROM order_lines
-INNER JOIN orders
+FROM orders
+INNER JOIN order_lines
 ON orders.order_id = order_lines.order_id
 WHERE quantity > 250 
 	AND salesperson_person_id IN (
@@ -203,5 +203,5 @@ ORDER BY levertijd DESC;
 -- Zou je de query ook heel anders kunnen schrijven om hem te versnellen?
 
 /*
-    Ik zou niet weten of dat kan en hoe dat dan moet
+    Ik zou niet weten of dat kan en hoe dat dan moet mischien als je de subquery verandert of zoiets
 */
