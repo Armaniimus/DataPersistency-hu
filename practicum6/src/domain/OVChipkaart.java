@@ -19,10 +19,9 @@ public class OVChipkaart {
     private int klasse;
     private Double saldo;
 
-//    @Column(name = "geldig_tot")
     private int reiziger_id;
 
-    @ManyToOne
+    @ManyToMany
     @Transient
     private Reiziger reiziger;
 

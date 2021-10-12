@@ -22,7 +22,7 @@ public class Reiziger {
     @Transient
     private Adres adresObj;
 
-    @OneToMany
+    @ManyToMany
     @Transient
     private List<OVChipkaart> ovChipkaart;
 
