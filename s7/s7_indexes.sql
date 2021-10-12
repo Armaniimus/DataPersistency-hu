@@ -111,23 +111,24 @@ CREATE INDEX orders_customerID ON orders (customer_id);
 -- 1. Maak hieronder deze query (als je het goed doet zouden er 377 rijen uit moeten komen, en het kan best even duren...)
 
 
-SELECT (
+SELECT
 	orders.order_id,
 	order_date,
 	salesperson_person_id AS verkoper,
-	(SELECT count (order_lines.order_id) FROM order_lines WHERE order_lines.order_id = orders.order_id)
-) FROM orders
--- WHERE quantity > 250;
+	ABS(expected_delivery_date - order_date) AS levertijd,
+	quantity
+FROM order_lines
+INNER JOIN orders
+ON orders.order_id = order_lines.order_id
+WHERE quantity > 250 
+	AND salesperson_person_id IN (
+		SELECT salesperson_person_id
+		FROM orders
+		GROUP BY salesperson_person_id
+		HAVING AVG(ABS( expected_delivery_date - order_date)) > 1.45
+	)
 
-
-SELECT (
-	orders.order_id,
-	order_date,
-	orders.salesperson_person_id as verkoper
--- 	(SELECT count (order_lines.order_id) FROM order_lines WHERE order_lines.order_id = orders.order_id)
-) FROM orders
-
-SELECT count(order_id) FROM order_lines 
+ORDER BY levertijd DESC;
 
 
 
@@ -135,12 +136,72 @@ SELECT count(order_id) FROM order_lines
 -- S7.3.B
 --
 -- 1. Vraag het EXPLAIN plan op van je query (kopieer hier, onder de opdracht)
--- 2. Kijk of je met 1 of meer indexen de query zou kunnen versnellen
--- 3. Maak de index(en) aan en run nogmaals het EXPLAIN plan (kopieer weer onder de opdracht)
--- 4. Wat voor verschillen zie je? Verklaar hieronder.
+/*
+    Gather Merge  (cost=9946.97..9975.44 rows=244 width=20)
+    Workers Planned: 2
+    ->  Sort  (cost=8946.95..8947.26 rows=122 width=20)
+    Sort Key: (abs((orders.expected_delivery_date - orders.order_date))) DESC
 
+    ->  Hash Join  (cost=2372.41..8942.72 rows=122 width=20)
+    Hash Cond: (orders.salesperson_person_id = orders_1.salesperson_person_id)
+    ->  Nested Loop  (cost=0.29..6568.49 rows=405 width=20)
+    ->  Parallel Seq Scan on order_lines  (cost=0.00..5051.27 rows=405 width=8)
+
+    Filter: (quantity > 250)
+    ->  Index Scan using pk_sales_orders on orders  (cost=0.29..3.75 rows=1 width=16)
+    Index Cond: (order_id = order_lines.order_id)
+    ->  Hash  (cost=2372.08..2372.08 rows=3 width=4)
+
+    ->  HashAggregate  (cost=2371.90..2372.05 rows=3 width=4)
+    Group Key: orders_1.salesperson_person_id
+    Filter: (avg(abs((orders_1.expected_delivery_date - orders_1.order_date))) > 1.45)
+    ->  Seq Scan on orders orders_1  (cost=0.00..1635.95 rows=73595 width=12)
+*/
+
+-- 2. Kijk of je met 1 of meer indexen de query zou kunnen versnellen
+
+    --index1
+    CREATE INDEX orders_expected_delivery_date_MINUS_order_date ON orders ABS( expected_delivery_date - order_date)
+    CREATE INDEX orderlines_quantity ON order_lines (quantity)
+
+    --index2
+    ALTER TABLE "order_lines"
+    ADD CONSTRAINT "orderlines FK orders" FOREIGN KEY ("order_id")
+    REFERENCES "orders"("order_id");
+
+-- 3. Maak de index(en) aan en run nogmaals het EXPLAIN plan (kopieer weer onder de opdracht)
+/*
+"Sort  (cost=6726.78..6727.51 rows=292 width=20)"
+"  Sort Key: (abs((orders.expected_delivery_date - orders.order_date))) DESC"
+"  ->  Hash Join  (cost=4633.84..6714.83 rows=292 width=20)"
+"        Hash Cond: (orders.order_id = order_lines.order_id)"
+"        ->  Hash Join  (cost=2372.12..4283.13 rows=22078 width=16)"
+"              Hash Cond: (orders.salesperson_person_id = orders_1.salesperson_person_id)"
+"              ->  Seq Scan on orders  (cost=0.00..1635.95 rows=73595 width=16)"
+"              ->  Hash  (cost=2372.08..2372.08 rows=3 width=4)"
+"                    ->  HashAggregate  (cost=2371.90..2372.05 rows=3 width=4)"
+"                          Group Key: orders_1.salesperson_person_id"
+"                          Filter: (avg(abs((orders_1.expected_delivery_date - orders_1.order_date))) > 1.45)"
+"                          ->  Seq Scan on orders orders_1  (cost=0.00..1635.95 rows=73595 width=12)"
+"        ->  Hash  (cost=2249.58..2249.58 rows=972 width=8)"
+"              ->  Bitmap Heap Scan on order_lines  (cost=11.83..2249.58 rows=972 width=8)"
+"                    Recheck Cond: (quantity > 250)"
+"                    ->  Bitmap Index Scan on orderlines_quantity  (cost=0.00..11.58 rows=972 width=0)"
+"                          Index Cond: (quantity > 250)"
+*/
+
+-- 4. Wat voor verschillen zie je? Verklaar hieronder.
+/*
+    De foreign key en orders_expected_delivery_date_MINUS_order_date index lijken geen effect te hebben
+    De index op de quantity lijkt wel erg succesvol om deze query sneller te maken
+    Verder is de explain 1 regel langer dan de vorige explain omdat hij voor de bitree een regel meer gebruikt bij het uitleggen.
+*/
 
 
 -- S7.3.C
 --
 -- Zou je de query ook heel anders kunnen schrijven om hem te versnellen?
+
+/*
+    Ik zou niet weten of dat kan en hoe dat dan moet
+*/
