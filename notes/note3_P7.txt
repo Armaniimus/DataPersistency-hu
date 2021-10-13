@@ -1,0 +1,12 @@
+@oneToOne(mappedBy="<class.variabel>")
+
+@JoinColumn(name="table")
+
+
+@JoinTable( name = "<a_b_link_table_name>"
+	JoinColumns = { @JoinColumn(name="foreignKey") }
+	inverseJoinColumn = { @JoinColumn(name='foreignKey') }
+)
+
+variabelen die je bij de start van een try block gebruikt
+worden automatisch gesloten.
