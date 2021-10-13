@@ -19,14 +19,11 @@ public class OVChipkaart {
     private int klasse;
     private Double saldo;
 
-    private int reiziger_id;
-
-    @ManyToMany
-    @Transient
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "reiziger_id")
     private Reiziger reiziger;
 
-    @ManyToMany
-    @Transient
+    @ManyToMany(mappedBy = "ovChipkaart", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Product> product;
 
     public OVChipkaart() {
@@ -38,7 +35,6 @@ public class OVChipkaart {
         this.geldigTot = geldigTot;
         this.klasse = klasse;
         this.saldo = saldo;
-        this.reiziger_id = reiziger_id;
     }
 
     public String toString() {
@@ -91,7 +87,6 @@ public class OVChipkaart {
         string += geldigTotStr + ", ";
         string += this.klasse + ", ";
         string += this.saldo + ", ";
-        string += this.reiziger_id;
 
         return string;
     }
@@ -107,9 +102,6 @@ public class OVChipkaart {
 
     public Double getSaldo() {return saldo;}
     public void setSaldo(Double saldo) {this.saldo = saldo;}
-
-    public int getReiziger_id() {return reiziger_id;}
-    public void setReiziger_id(int reiziger_id) {this.reiziger_id = reiziger_id;}
 
     public Reiziger getReiziger() {return reiziger;}
     public void setReiziger(Reiziger reizigerObj, boolean relationCalled) {

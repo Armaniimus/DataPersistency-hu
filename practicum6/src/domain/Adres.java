@@ -4,7 +4,6 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name="adres")
 public class Adres {
     @Id
     @Column(name = "adres_id")
@@ -13,10 +12,10 @@ public class Adres {
     private String straat;
     private String woonplaats;
     private String postcode;
-    private int reiziger_id;
 
-    @OneToOne
-    @Transient
+
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "reiziger_id")
     private Reiziger reiziger;
 
     public Adres() {
@@ -29,7 +28,6 @@ public class Adres {
         this.huisnummer = huisnummer;
         this.woonplaats = woonplaats;
         this.postcode = postcode;
-        this.reiziger_id = reiziger_id;
     }
 
     private String __internalGetInfo() {
@@ -39,7 +37,6 @@ public class Adres {
         adresStr += this.huisnummer + ", ";
         adresStr += this.woonplaats + ", ";
         adresStr += this.postcode + ", ";
-        adresStr += this.reiziger_id;
 
         return adresStr;
     }
@@ -78,10 +75,7 @@ public class Adres {
     public String getPostcode() {return postcode;}
     public void setPostcode(String postcode) {this.postcode = postcode;}
 
-    public int getReiziger_id() {return this.reiziger_id;}
-    public void setReiziger_id(int reiziger_id) {this.reiziger_id = reiziger_id;}
-
-    public Reiziger getReiziger() {return this.reiziger;}
+//    public Reiziger getReiziger() {return this.reiziger;}
     public void setReiziger(Reiziger reiziger, boolean relationCalled) {
         this.reiziger = reiziger;
         if (!relationCalled) {
