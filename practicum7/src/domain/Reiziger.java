@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name="reiziger")
+//@Table(name="reiziger")
 public class Reiziger {
     @Id
     @Column(name = "reiziger_id")
@@ -18,12 +18,10 @@ public class Reiziger {
     private String achternaam;
     private Date geboorteDatum;
 
-    @OneToOne
-    @Transient
-    private Adres adresObj;
+    @OneToOne(mappedBy = "reiziger", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Adres adres;
 
-    @ManyToMany
-    @Transient
+    @OneToMany(mappedBy = "reiziger", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<OVChipkaart> ovChipkaart;
 
     public Reiziger() {
@@ -49,8 +47,8 @@ public class Reiziger {
     public String toString() {
         String AdresObjString = "";
 
-        if (this.adresObj != null) {
-            AdresObjString += "Adres" + this.adresObj.getInfo();
+        if (this.adres != null) {
+            AdresObjString += "Adres" + this.adres.getInfo();
         } else {
             AdresObjString += "null";
         }
@@ -101,7 +99,7 @@ public class Reiziger {
     }
 
     public String getInfoFromOvchipkaart() {
-        return  "{ " + this.__internalGetInfo() + " Adres" + adresObj.getInfo() + " }";
+        return  "{ " + this.__internalGetInfo() + " Adres" + adres.getInfo() + " }";
     }
 
     private String __internalGetInfo() {
@@ -152,14 +150,14 @@ public class Reiziger {
         return geboorteDatum;
     }
 
-    public void setAdres(Adres adresObj, boolean relationCalled) {
-        this.adresObj = adresObj;
+    public void setAdres(Adres adres, boolean relationCalled) {
+        this.adres = adres;
         if (!relationCalled){
-            this.adresObj.setReiziger(this, true);
+            this.adres.setReiziger(this, true);
         }
     }
     public Adres getAdres() {
-        return adresObj;
+        return adres;
     }
 
     public void setOvChipkaartList(ArrayList<OVChipkaart> ovChipkaartList, boolean relationCalled) {
