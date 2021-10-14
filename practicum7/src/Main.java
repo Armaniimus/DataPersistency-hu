@@ -5,6 +5,7 @@ import daos.ReizigerDAO;
 import domain.Adres;
 
 import domain.OVChipkaart;
+import domain.Product;
 import domain.Reiziger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -13,9 +14,7 @@ import org.hibernate.cfg.Configuration;
 
 import utility.TestDataManager;
 
-import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,7 +68,7 @@ public class Main {
     public static void testDAOHibernate() {
         testDataManager.deleteOldTestData();
 
-//        testAdres();
+        testAdres();
         testReiziger();
         testOVChipkaart();
         testProduct();
@@ -78,9 +77,9 @@ public class Main {
     public static void testAdres() {
         System.out.println("\n---------- Test AdresDAO -------------");
 
-//        testAdresFindAll();
-//        testAdresFindById();
-//
+        testAdresFindAll();
+        testAdresFindById();
+
         testAdresSave();
         testAdresUpdate();
         testAdresDelete();
@@ -89,9 +88,9 @@ public class Main {
     public static void testReiziger() {
         System.out.println("\n---------- Test ReizigerDAO -------------");
 
-//        testReizigerFindAll();
-//        testReizigerFindById();
-//        testReizigerFindByGbDatum();
+        testReizigerFindAll();
+        testReizigerFindById();
+        testReizigerFindByGbDatum();
 
         testReizigerSave();
         testReizigerUpdate();
@@ -100,10 +99,24 @@ public class Main {
 
     public static void testOVChipkaart() {
         System.out.println("\n---------- Test OVchipkaartDAO -------------");
+
+        testOvchipkaartFindAll();
+        testOvchipkaartFindById();
+
+        testOvchipkaartSave();
+        testOvchipkaartUpdate();
+        testOvchipkaartDelete();
     }
 
     public static void testProduct() {
         System.out.println("\n---------- Test ProductDAO -------------");
+
+        testProductFindAll();
+        testProductFindById();
+
+        testProductSave();
+        testProductUpdate();
+        testProductDelete();
     }
 
     /**
@@ -119,10 +132,10 @@ public class Main {
     }
 
     private static void testAdresFindById() {
-        System.out.println("[Test] findById reiziger met id 1 wordt gezocht");
+        System.out.println("[Test] findById id 1 wordt gezocht");
 
-        Adres gevondenAdres = adresDAO.findById(1);
-        System.out.println(gevondenAdres);
+        Adres result = adresDAO.findById(1);
+        System.out.println(result);
         System.out.println();
     }
 
@@ -146,7 +159,7 @@ public class Main {
         adresDAO.update(newAdres);
 
         newAdres = adresDAO.findById(1945);
-        System.out.print("[Test] after update:" + newAdres);
+        System.out.println("[Test] after update:" + newAdres);
 
         System.out.println();
     }
@@ -216,7 +229,7 @@ public class Main {
         reizigerDAO.update(testReiziger);
 
         testReiziger = reizigerDAO.findById(1945);
-        System.out.print("[Test] after update:" + testReiziger);
+        System.out.println("[Test] after update:" + testReiziger);
         System.out.println();
     }
 
@@ -227,6 +240,123 @@ public class Main {
         reizigerDAO.delete(testReiziger);
         reizigers = reizigerDAO.findAll();
         System.out.println(reizigers.size() + " reizigers");
+        System.out.println();
+    }
+
+    /**
+     * start of ovChipkaart test functions
+     */
+
+    private static void testOvchipkaartFindAll() {
+        List<OVChipkaart> OVChipkaarten = ovChipkaartDAO.findAll();
+        System.out.println("[Test] OVChipkaartDAO.findAll() geeft de volgende Ovchipkaarten:");
+        for (OVChipkaart o : OVChipkaarten) {
+            System.out.println(o);
+        }
+        System.out.println();
+    }
+
+    private static void testOvchipkaartFindById() {
+        System.out.println("[Test] findById id 18326 wordt gezocht");
+
+        OVChipkaart result = ovChipkaartDAO.findById(18326);
+        System.out.println(result);
+        System.out.println();
+    }
+
+    private static void testOvchipkaartSave() {
+        List<OVChipkaart> OVChipkaarten = ovChipkaartDAO.findAll();
+        System.out.print("[Test] Eerst " + OVChipkaarten.size() + " ovChipkaarten, na OvchipkaartDAO.save() ");
+
+        OVChipkaart newOV = testDataManager.getOvChipkaart();
+        ovChipkaartDAO.save(newOV);
+
+        OVChipkaarten = ovChipkaartDAO.findAll();
+        System.out.println(OVChipkaarten.size() + " ovChipkaarten\n");
+    }
+
+    private static void testOvchipkaartUpdate() {
+        OVChipkaart newOv = ovChipkaartDAO.findById(1945);
+
+        System.out.println("[Test] before update:" + newOv);
+        newOv.setKlasse(4);
+        newOv.setSaldo(500.00);
+        ovChipkaartDAO.update(newOv);
+
+        newOv = ovChipkaartDAO.findById(1945);
+        System.out.println("[Test] after update:" + newOv);
+
+        System.out.println();
+    }
+
+    private static void testOvchipkaartDelete() {
+        List<OVChipkaart> OVChipkaarten = ovChipkaartDAO.findAll();
+        System.out.println("[Test] Eerst " + OVChipkaarten.size() + " Ovchipkaarten, na OVChipkaartDAO.delete() ");
+
+        OVChipkaart newOv = ovChipkaartDAO.findById(1945);
+        ovChipkaartDAO.delete(newOv);
+
+        OVChipkaarten = ovChipkaartDAO.findAll();
+        System.out.println(OVChipkaarten.size() + " Ovchipkaarten");
+        System.out.println();
+    }
+
+    /**
+     * start of ovChipkaart test functions
+     */
+
+    private static void testProductFindAll() {
+        List<Product> producten = productDAO.findAll();
+        System.out.println("[Test] ProductDAO.findAll() geeft de volgende producten:");
+        for (Product a : producten) {
+            System.out.println(a);
+        }
+        System.out.println();
+    }
+
+    private static void testProductFindById() {
+        System.out.println("[Test] findById id 1 wordt gezocht");
+
+        Product result = productDAO.findById(1);
+        System.out.println(result);
+        System.out.println();
+    }
+
+    private static void testProductSave() {
+        List<Product> producten = productDAO.findAll();
+        System.out.print("[Test] Eerst " + producten.size() + " product(en) , na ProductDao.save() ");
+
+        Product product = testDataManager.getProduct();
+        productDAO.save(product);
+
+        producten = productDAO.findAll();
+        System.out.println(producten.size() + " producten\n");
+    }
+
+    /**
+     * update product
+     */
+    private static void testProductUpdate() {
+        Product product = productDAO.findById(1945);
+        System.out.println("[Test] before update:" + product);
+
+        product.setPrijs(0.00);
+        product.setBeschrijving("Oude van dagen subsidie");
+        productDAO.update(product);
+
+        product = productDAO.findById(1945);
+        System.out.println("[Test] after update: " + product);
+        System.out.println();
+    }
+
+    private static void testProductDelete() {
+        Product product = productDAO.findById(1945);
+        System.out.println("[Test] before delete:" + product);
+
+        productDAO.delete(product);
+
+        product = productDAO.findById(1945);
+        System.out.println("[Test] after delete: " + product);
         System.out.println();
     }
 }
