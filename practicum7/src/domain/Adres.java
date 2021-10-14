@@ -14,7 +14,7 @@ public class Adres {
     private String postcode;
 
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "reiziger_id")
     private Reiziger reiziger;
 

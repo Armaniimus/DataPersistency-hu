@@ -18,10 +18,10 @@ public class Reiziger {
     private String achternaam;
     private Date geboorteDatum;
 
-    @OneToOne(mappedBy = "reiziger", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(mappedBy = "reiziger", cascade = {CascadeType.ALL})
     private Adres adres;
 
-    @OneToMany(mappedBy = "reiziger", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "reiziger", cascade = {CascadeType.ALL})
     private List<OVChipkaart> ovChipkaart;
 
     public Reiziger() {
