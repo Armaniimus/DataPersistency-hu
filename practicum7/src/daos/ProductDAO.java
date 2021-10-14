@@ -66,8 +66,12 @@ public class ProductDAO implements ProductDAOInterface {
     }
 
     @Override
-    public ArrayList<Product> findAll() {
-        return null;
+    public List<Product> findAll() {
+        String hql = "FROM Product";
+        Query query = session.createQuery(hql);
+        List results = query.list();
+
+        return results;
     }
 
     public Product findById(int id) {

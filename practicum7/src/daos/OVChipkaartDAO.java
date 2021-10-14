@@ -66,8 +66,12 @@ public class OVChipkaartDAO implements OVChipkaartDAOInterface {
     }
 
     @Override
-    public ArrayList<OVChipkaart> findAll() {
-        return null;
+    public List<OVChipkaart> findAll() {
+        String hql = "FROM OVChipkaart ";
+        Query query = session.createQuery(hql);
+        List results = query.list();
+
+        return results;
     }
 
     public OVChipkaart findById(int id) {
