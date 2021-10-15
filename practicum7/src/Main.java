@@ -33,6 +33,11 @@ public class Main {
     private static OVChipkaartDAO ovChipkaartDAO = new OVChipkaartDAO();
     private static ProductDAO productDAO = new ProductDAO();
 
+    private static int adresTestID = 1914;
+    private static int reizigerTestID = 1918;
+    private static int ovChipkaartTestID = 1940;
+    private static int productTestID = 1945;
+
     private static TestDataManager testDataManager;
 
     static {
@@ -78,7 +83,10 @@ public class Main {
 
 
     public static void testDAOHibernate() {
-        testDataManager.deleteOldTestData();
+        testDataManager.deleteOldTestData( adresTestID );
+        testDataManager.deleteOldTestData( reizigerTestID );
+        testDataManager.deleteOldTestData( ovChipkaartTestID );
+        testDataManager.deleteOldTestData( productTestID );
 
         testAdres();
         testReiziger();
@@ -155,7 +163,7 @@ public class Main {
         List<Adres> adressen = adresDAO.findAll();
         System.out.print("[Test] Eerst " + adressen.size() + " adressen, na AdresDAO.save() ");
 
-        Adres newAdres = testDataManager.getAdres();
+        Adres newAdres = testDataManager.getAdres( adresTestID );
         adresDAO.save(newAdres);
 
         adressen = adresDAO.findAll();
@@ -163,14 +171,14 @@ public class Main {
     }
 
     private static void testAdresUpdate() {
-        Adres newAdres = adresDAO.findById(1945);
+        Adres newAdres = adresDAO.findById( adresTestID );
 
         System.out.println("[Test] before update:" + newAdres);
         newAdres.setWoonplaats("Utrecht");
         newAdres.setPostcode("Qwerty");
         adresDAO.update(newAdres);
 
-        newAdres = adresDAO.findById(1945);
+        newAdres = adresDAO.findById( adresTestID );
         System.out.println("[Test] after update:" + newAdres);
 
         System.out.println();
@@ -178,7 +186,7 @@ public class Main {
 
     private static void testAdresDelete() {
         List<Adres> adressen = adresDAO.findAll();
-        Adres newAdres = adresDAO.findById(1945);
+        Adres newAdres = adresDAO.findById( adresTestID );
 
         System.out.print("[Test] Eerst " + adressen.size() + " adressen, na AdresDAO.delete() ");
         adresDAO.delete(newAdres);
@@ -221,7 +229,7 @@ public class Main {
         List<Reiziger> reizigers = reizigerDAO.findAll();
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
 
-        Reiziger testReiziger = testDataManager.getReiziger();
+        Reiziger testReiziger = testDataManager.getReiziger( reizigerTestID );
         reizigerDAO.save( testReiziger );
 
         reizigers = reizigerDAO.findAll();
@@ -229,7 +237,7 @@ public class Main {
     }
 
     private static void testReizigerUpdate() {
-        Reiziger testReiziger = reizigerDAO.findById(1945);
+        Reiziger testReiziger = reizigerDAO.findById( reizigerTestID );
 
         System.out.println("[Test] before update:" + testReiziger);
 
@@ -240,14 +248,14 @@ public class Main {
         testReiziger.getAdres().setPostcode("6787GE");
         reizigerDAO.update(testReiziger);
 
-        testReiziger = reizigerDAO.findById(1945);
+        testReiziger = reizigerDAO.findById( reizigerTestID );
         System.out.println("[Test] after update:" + testReiziger);
         System.out.println();
     }
 
     private static void testReizigerDelete() {
         List<Reiziger> reizigers = reizigerDAO.findAll();
-        Reiziger testReiziger = reizigerDAO.findById(1945);
+        Reiziger testReiziger = reizigerDAO.findById( reizigerTestID );
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.delete() ");
         reizigerDAO.delete(testReiziger);
         reizigers = reizigerDAO.findAll();
@@ -280,7 +288,7 @@ public class Main {
         List<OVChipkaart> OVChipkaarten = ovChipkaartDAO.findAll();
         System.out.print("[Test] Eerst " + OVChipkaarten.size() + " ovChipkaarten, na OvchipkaartDAO.save() ");
 
-        OVChipkaart newOV = testDataManager.getOvChipkaart();
+        OVChipkaart newOV = testDataManager.getOvChipkaart( ovChipkaartTestID );
         ovChipkaartDAO.save(newOV);
 
         OVChipkaarten = ovChipkaartDAO.findAll();
@@ -288,14 +296,14 @@ public class Main {
     }
 
     private static void testOvchipkaartUpdate() {
-        OVChipkaart newOv = ovChipkaartDAO.findById(1945);
+        OVChipkaart newOv = ovChipkaartDAO.findById( ovChipkaartTestID );
 
         System.out.println("[Test] before update:" + newOv);
         newOv.setKlasse(4);
         newOv.setSaldo(500.00);
         ovChipkaartDAO.update(newOv);
 
-        newOv = ovChipkaartDAO.findById(1945);
+        newOv = ovChipkaartDAO.findById( ovChipkaartTestID );
         System.out.println("[Test] after update:" + newOv);
 
         System.out.println();
@@ -305,7 +313,7 @@ public class Main {
         List<OVChipkaart> OVChipkaarten = ovChipkaartDAO.findAll();
         System.out.println("[Test] Eerst " + OVChipkaarten.size() + " Ovchipkaarten, na OVChipkaartDAO.delete() ");
 
-        OVChipkaart newOv = ovChipkaartDAO.findById(1945);
+        OVChipkaart newOv = ovChipkaartDAO.findById( ovChipkaartTestID );
         ovChipkaartDAO.delete(newOv);
 
         OVChipkaarten = ovChipkaartDAO.findAll();
@@ -338,7 +346,7 @@ public class Main {
         List<Product> producten = productDAO.findAll();
         System.out.print("[Test] Eerst " + producten.size() + " product(en) , na ProductDao.save() ");
 
-        Product product = testDataManager.getProduct();
+        Product product = testDataManager.getProduct( productTestID );
         productDAO.save(product);
 
         producten = productDAO.findAll();
@@ -349,25 +357,25 @@ public class Main {
      * update product
      */
     private static void testProductUpdate() {
-        Product product = productDAO.findById(1945);
+        Product product = productDAO.findById( productTestID );
         System.out.println("[Test] before update:" + product);
 
         product.setPrijs(0.00);
         product.setBeschrijving("Oude van dagen subsidie");
         productDAO.update(product);
 
-        product = productDAO.findById(1945);
+        product = productDAO.findById( productTestID );
         System.out.println("[Test] after update: " + product);
         System.out.println();
     }
 
     private static void testProductDelete() {
-        Product product = productDAO.findById(1945);
+        Product product = productDAO.findById( productTestID );
         System.out.println("[Test] before delete:" + product);
 
         productDAO.delete(product);
 
-        product = productDAO.findById(1945);
+        product = productDAO.findById( productTestID );
         System.out.println("[Test] after delete: " + product);
         System.out.println();
     }

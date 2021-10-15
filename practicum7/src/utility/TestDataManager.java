@@ -26,39 +26,39 @@ public class TestDataManager {
         this.productDAO = productDAO;
     }
 
-    public void deleteOldTestData() {
-        __deleteOldTestData();
-        __deleteOldTestData();
-        __deleteOldTestData();
+    public void deleteOldTestData(int id) {
+        __deleteOldTestData(id);
+        __deleteOldTestData(id);
+        __deleteOldTestData(id);
     }
 
-    private void __deleteOldTestData() {
-        Adres oldAdres = adresDAO.findById(1945);
+    private void __deleteOldTestData(int id) {
+        Adres oldAdres = adresDAO.findById(id);
         if (oldAdres != null) {
             adresDAO.delete(oldAdres);
         }
 
-        Product oldProduct = productDAO.findById(1945);
+        Product oldProduct = productDAO.findById(id);
         if (oldProduct != null) {
             productDAO.delete(oldProduct);
         }
 
-        OVChipkaart oldOVChipkaart = ovChipkaartDAO.findById(1945);
+        OVChipkaart oldOVChipkaart = ovChipkaartDAO.findById(id);
         if (oldOVChipkaart != null) {
             ovChipkaartDAO.delete(oldOVChipkaart);
         }
 
-        Reiziger oldReiziger = reizigerDAO.findById(1945);
+        Reiziger oldReiziger = reizigerDAO.findById(id);
         if (oldReiziger != null) {
             reizigerDAO.delete(oldReiziger);
         }
     }
 
-    private Reiziger createTestData() {
-        Adres adres = new Adres(1945, "","", "","");
-        Reiziger reiziger = new Reiziger(1945, "","","", Date.valueOf("2022-12-01") );
-        OVChipkaart newOv = new OVChipkaart(1945, Date.valueOf("2022-12-01"), 1, 25.50 );
-        Product ovProduct = new Product(1945, "", "", 14.50);
+    private Reiziger createTestData(int id) {
+        Adres adres = new Adres(id, "","", "","");
+        Reiziger reiziger = new Reiziger(id, "","","", Date.valueOf("2022-12-01") );
+        OVChipkaart newOv = new OVChipkaart(id, Date.valueOf("2022-12-01"), 1, 25.50 );
+        Product ovProduct = new Product(id, "", "", 14.50);
 
         ArrayList<Product> productArrayList = new ArrayList<>();
         productArrayList.add(ovProduct);
@@ -70,23 +70,23 @@ public class TestDataManager {
         return reiziger;
     }
 
-    public Adres getAdres() {
-        Reiziger reiziger = createTestData();
+    public Adres getAdres(int id) {
+        Reiziger reiziger = createTestData(id);
         return reiziger.getAdres();
     }
 
-    public Reiziger getReiziger() {
-        return createTestData();
+    public Reiziger getReiziger(int id) {
+        return createTestData(id);
     }
 
-    public OVChipkaart getOvChipkaart() {
-        Reiziger reiziger = createTestData();
+    public OVChipkaart getOvChipkaart(int id) {
+        Reiziger reiziger = createTestData(id);
         List<OVChipkaart> ovList = reiziger.getOvChipkaart();
         return ovList.get(0);
     }
 
-    public Product getProduct() {
-        OVChipkaart ov = getOvChipkaart();
+    public Product getProduct(int id) {
+        OVChipkaart ov = getOvChipkaart(id);
         List<Product> productList = ov.getProduct();
 
         return productList.get(0);
