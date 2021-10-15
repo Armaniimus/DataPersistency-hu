@@ -54,14 +54,18 @@ public class Main {
     }
 
     public static void main(String[] args) throws SQLException {
-        adresDAO.setSession( getSession() );
-        reizigerDAO.setSession( getSession() );
-        ovChipkaartDAO.setSession( getSession() );
-        productDAO.setSession( getSession() );
+        Session session = getSession();
+
+        adresDAO.setSession( session );
+        reizigerDAO.setSession( session );
+        ovChipkaartDAO.setSession( session );
+        productDAO.setSession( session );
 
         testDataManager = new TestDataManager(adresDAO, reizigerDAO, ovChipkaartDAO, productDAO);
 
         testDAOHibernate();
+
+        session.close();
     }
 
 
