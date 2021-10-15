@@ -120,7 +120,7 @@ SELECT
 FROM orders
 INNER JOIN order_lines
 ON orders.order_id = order_lines.order_id
-WHERE quantity > 250 
+WHERE quantity > 250
 	AND salesperson_person_id IN (
 		SELECT salesperson_person_id
 		FROM orders
@@ -203,5 +203,9 @@ ORDER BY levertijd DESC;
 -- Zou je de query ook heel anders kunnen schrijven om hem te versnellen?
 
 /*
-    Ik zou niet weten of dat kan en hoe dat dan moet mischien als je de subquery verandert of zoiets
+	Zonder het levertijd filter vind hij 941 regels.
+	In de huidige situatie moet hij voor al die resultaten een virtuele tabel maken met de subquery
+	Als je de subquery verplaatst zodat hij in een join draait dan wordt het resultaat 1x in een virtuele tabel gezet.
+	Dit betekent dat hij dus 940 minder virtuele tabbellen hoeft te maken.
+	Een oplossing met een subquery in een join kan dus de opdracht aanzienlijk versnellen.
 */
