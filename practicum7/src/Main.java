@@ -28,10 +28,11 @@ public class Main {
     // Creëer een factory voor Hibernate sessions.
     private static final SessionFactory factory;
 
-    private static AdresDAO adresDAO= new AdresDAO();;
+    private static AdresDAO adresDAO = new AdresDAO();
     private static ReizigerDAO reizigerDAO = new ReizigerDAO();
     private static OVChipkaartDAO ovChipkaartDAO = new OVChipkaartDAO();
     private static ProductDAO productDAO = new ProductDAO();
+
     private static TestDataManager testDataManager;
 
     static {
@@ -60,6 +61,13 @@ public class Main {
         reizigerDAO.setSession( session );
         ovChipkaartDAO.setSession( session );
         productDAO.setSession( session );
+
+        adresDAO.setReizigerDAO(reizigerDAO);
+        reizigerDAO.setAdresDAO(adresDAO);
+        reizigerDAO.setOvChipkaartDAO(ovChipkaartDAO);
+        ovChipkaartDAO.setReizigerDAO(reizigerDAO);
+        ovChipkaartDAO.setProductDAO(productDAO);
+        productDAO.setOvChipkaartDAO(ovChipkaartDAO);
 
         testDataManager = new TestDataManager(adresDAO, reizigerDAO, ovChipkaartDAO, productDAO);
 

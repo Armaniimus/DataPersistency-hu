@@ -10,6 +10,11 @@ import java.util.List;
 
 public class AdresDAO implements AdresDAOInterface {
     private Session session;
+    private ReizigerDAO reizigerDAO;
+
+    public void setReizigerDAO(ReizigerDAO reizigerDAO) {
+        this.reizigerDAO = reizigerDAO;
+    }
 
     public void setSession(Session session) {
         if (this.session == null) {

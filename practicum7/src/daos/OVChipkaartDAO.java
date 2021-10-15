@@ -2,17 +2,25 @@ package daos;
 
 import domain.OVChipkaart;
 import domain.Product;
-import domain.Reiziger;
 import interfaces.OVChipkaartDAOInterface;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OVChipkaartDAO implements OVChipkaartDAOInterface {
     private Session session;
+    private ReizigerDAO reizigerDAO;
+    private ProductDAO productDAO;
+
+    public void setReizigerDAO(ReizigerDAO reizigerDAO) {
+        this.reizigerDAO = reizigerDAO;
+    }
+
+    public void setProductDAO(ProductDAO productDAO) {
+        this.productDAO = productDAO;
+    }
 
     public void setSession(Session session) {
         if (this.session == null) {

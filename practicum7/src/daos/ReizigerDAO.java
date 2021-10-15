@@ -1,6 +1,7 @@
 package daos;
 
 
+import domain.OVChipkaart;
 import domain.Reiziger;
 import interfaces.ReizigerDAOInterface;
 import org.hibernate.Session;
@@ -13,6 +14,16 @@ import java.util.List;
 
 public class ReizigerDAO implements ReizigerDAOInterface {
     private Session session;
+    private AdresDAO adresDAO;
+    private OVChipkaartDAO ovChipkaartDAO;
+
+    public void setAdresDAO(AdresDAO adresDAO) {
+        this.adresDAO = adresDAO;
+    }
+
+    public void setOvChipkaartDAO(OVChipkaartDAO ovChipkaartDAO) {
+        this.ovChipkaartDAO = ovChipkaartDAO;
+    }
 
     public void setSession(Session session) {
         if (this.session == null) {
