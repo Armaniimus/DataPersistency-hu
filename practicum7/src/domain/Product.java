@@ -26,7 +26,7 @@ public class Product {
     }
 
     public Product( int product_nummer, String naam, String beschrijving, Double prijs) {
-        this.product_nummer=product_nummer;
+        this.product_nummer = product_nummer;
         this.naam = naam;
         this.beschrijving = beschrijving;
         this.prijs = prijs;
