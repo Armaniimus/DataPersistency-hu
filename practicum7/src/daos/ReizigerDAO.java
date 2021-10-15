@@ -31,6 +31,19 @@ public class ReizigerDAO implements ReizigerDAOInterface {
         }
     }
 
+    private Transaction getTransaction() {
+        Transaction transaction = session.getTransaction();
+        try {
+            if (!transaction.isActive()) {
+                transaction = session.beginTransaction();
+            }
+        } catch(Exception err) {
+            System.out.println(err.getMessage());
+        }
+
+        return transaction;
+    }
+
     @Override
     public boolean save(Reiziger reiziger) {
         Transaction transaction;
