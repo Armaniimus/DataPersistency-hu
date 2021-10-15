@@ -32,6 +32,12 @@ public class Product {
         this.prijs = prijs;
     }
 
+    public void removeOvChipkaart(OVChipkaart ovChipkaart) {
+        List<OVChipkaart> ovList = this.ovChipkaart;
+        int ovID = ovList.indexOf(ovChipkaart);
+        ovList.remove(ovID);
+    }
+
     public String toString() {
         String OvChipkaartListString = "";
         if (this.ovChipkaart != null && !this.ovChipkaart.isEmpty()) {

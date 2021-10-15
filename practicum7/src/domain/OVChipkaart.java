@@ -37,6 +37,12 @@ public class OVChipkaart {
         this.saldo = saldo;
     }
 
+    public void removeProduct(Product product) {
+        List<Product> productList = this.product;
+        int ovID = productList.indexOf(product);
+        productList.remove(ovID);
+    }
+
     public String toString() {
         String reizigerStr = "";
         if (this.reiziger != null) {
