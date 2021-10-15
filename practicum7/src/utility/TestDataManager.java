@@ -55,9 +55,9 @@ public class TestDataManager {
     }
 
     private Reiziger createTestData() {
-        Adres adres = new Adres(1945, "","", "","", 1945);
+        Adres adres = new Adres(1945, "","", "","");
         Reiziger reiziger = new Reiziger(1945, "","","", Date.valueOf("2022-12-01") );
-        OVChipkaart newOv = new OVChipkaart(1945, Date.valueOf("2022-12-01"), 1, 25.50, 1945 );
+        OVChipkaart newOv = new OVChipkaart(1945, Date.valueOf("2022-12-01"), 1, 25.50 );
         Product ovProduct = new Product(1945, "", "", 14.50);
 
         ArrayList<Product> productArrayList = new ArrayList<>();
