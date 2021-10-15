@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OVChipkaartDAO implements OVChipkaartDAOInterface {
@@ -72,17 +73,45 @@ public class OVChipkaartDAO implements OVChipkaartDAOInterface {
     }
 
     @Override
-    public boolean delete(OVChipkaart ovChipkaart) {
+    public void delete(OVChipkaart ovChipkaart) {
+        if (ovChipkaart.getReiziger() != null) {
+            this.reizigerDAO.deleteFromOvChipkaart(ovChipkaart.getReiziger());
+        } else {
+            this.deleteAndDecouple(ovChipkaart);
+        }
+    }
+
+    private void deleteAndDecouple(OVChipkaart ovChipkaart) {
+        this.__decoupleProducts(ovChipkaart);
+        this.__deleteOne(ovChipkaart);
+    }
+
+    private void __decoupleProducts(OVChipkaart ovChipkaart) {
+        List<Product> producten = ovChipkaart.getProduct();
+        for (int i = 0; i < producten.size(); i++) {
+            producten.get(i).removeOneOVChipkaart(ovChipkaart);
+            this.productDAO.update(producten.get(i));
+        }
+
+        ArrayList producten2 = new ArrayList();
+        ovChipkaart.setProductList(producten2, false);
+
+        this.update(ovChipkaart);
+    }
+
+    public void deleteFromReiziger(OVChipkaart ovChipkaart) {
+        this.deleteAndDecouple(ovChipkaart);
+    }
+
+    private void __deleteOne(OVChipkaart ovChipkaart) {
         Transaction transaction;
         try {
             transaction = session.beginTransaction();
             session.remove(ovChipkaart);
             transaction.commit();
 
-            return true;
         } catch(Exception e) {
             System.err.println( e.getMessage() );
-            return false;
         }
     }
 

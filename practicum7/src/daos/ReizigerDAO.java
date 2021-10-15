@@ -75,17 +75,38 @@ public class ReizigerDAO implements ReizigerDAOInterface {
     }
 
     @Override
-    public boolean delete(Reiziger reiziger) {
+    public void delete(Reiziger reiziger) {
+        if (reiziger != null) {
+            this.adresDAO.deleteFromReiziger( reiziger.getAdres() );
+
+            List<OVChipkaart> ovList = reiziger.getOvChipkaart();
+            for (int i = 0; i < ovList.size() ; i++) {
+                this.ovChipkaartDAO.deleteFromReiziger( ovList.get(i) );
+            }
+
+            this.adresDAO.deleteFromReiziger(reiziger.getAdres());
+
+            this.__deleteOne(reiziger);
+        }
+    }
+
+    public void deleteFromAdres(Reiziger reiziger) {
+        this.delete(reiziger);
+    }
+
+    public void deleteFromOvChipkaart(Reiziger reiziger) {
+        this.delete(reiziger);
+    }
+
+    private void __deleteOne(Reiziger reiziger) {
         Transaction transaction;
         try {
             transaction = session.beginTransaction();
             session.remove(reiziger);
             transaction.commit();
 
-            return true;
         } catch(Exception e) {
             System.err.println( e.getMessage() );
-            return false;
         }
     }
 

@@ -18,10 +18,10 @@ public class Reiziger {
     private String achternaam;
     private Date geboorteDatum;
 
-    @OneToOne(mappedBy = "reiziger", cascade = {CascadeType.ALL})
+    @OneToOne(mappedBy = "reiziger", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH} )
     private Adres adres;
 
-    @OneToMany(mappedBy = "reiziger", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "reiziger", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH} )
     private List<OVChipkaart> ovChipkaart;
 
     public Reiziger() {
@@ -95,7 +95,12 @@ public class Reiziger {
     }
 
     public String getInfoFromOvchipkaart() {
-        return  "{ " + this.__internalGetInfo() + " Adres" + adres.getInfo() + " }";
+        if (adres != null) {
+            return  "{ " + this.__internalGetInfo() + " Adres" + adres.getInfo() + " }";
+        } else {
+            return  "{ " + this.__internalGetInfo() + " null }";
+        }
+
     }
 
     private String __internalGetInfo() {

@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAO implements ProductDAOInterface {
@@ -67,17 +68,38 @@ public class ProductDAO implements ProductDAOInterface {
     }
 
     @Override
-    public boolean delete( Product product ) {
+    public void delete( Product product ) {
+
+        this.__deleteOne(product);
+    }
+
+    private void deleteAndDecouple(Product product) {
+        this.__decoupleProducts(product);
+        this.__deleteOne(product);
+    }
+
+    private void __decoupleProducts(Product product) {
+        List<OVChipkaart> ovList = product.getOvChipkaart();
+        for (int i = 0; i < ovList.size(); i++) {
+            ovList.get(i).removeOneProduct(product);
+            this.ovChipkaartDAO.update(ovList.get(i));
+        }
+
+        ArrayList ovList2 = new ArrayList();
+        product.setOvChipkaartList(ovList2, false);
+
+        this.update(product);
+    }
+
+    private void __deleteOne( Product product ) {
         Transaction transaction;
         try {
             transaction = session.beginTransaction();
             session.remove(product);
             transaction.commit();
 
-            return true;
         } catch(Exception e) {
             System.err.println( e.getMessage() );
-            return false;
         }
     }
 

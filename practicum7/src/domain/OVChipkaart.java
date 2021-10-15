@@ -19,11 +19,11 @@ public class OVChipkaart {
     private int klasse;
     private Double saldo;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH } )
     @JoinColumn(name = "reiziger_id")
     private Reiziger reiziger;
 
-    @ManyToMany(mappedBy = "ovChipkaart", cascade = {CascadeType.ALL} )
+    @ManyToMany(mappedBy = "ovChipkaart", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH} )
     private List<Product> product;
 
     public OVChipkaart() {
@@ -37,10 +37,10 @@ public class OVChipkaart {
         this.saldo = saldo;
     }
 
-    public void removeProduct(Product product) {
+    public void removeOneProduct(Product product) {
         List<Product> productList = this.product;
-        int ovID = productList.indexOf(product);
-        productList.remove(ovID);
+        int id = productList.indexOf(product);
+        productList.remove(id);
     }
 
     public String toString() {
@@ -51,7 +51,7 @@ public class OVChipkaart {
             reizigerStr += "null";
         }
 
-        String string = "OvChipkaart{ " + this.__internalGetInfo() + ", " + reizigerStr + ", " + this.__getProductString() + " }";;
+        String string = "OvChipkaart{ " + this.__internalGetInfo() + ", " + reizigerStr + ", " + this.__getProductString() + " }";
 
         return string;
     }

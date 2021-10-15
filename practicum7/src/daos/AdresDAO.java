@@ -66,19 +66,31 @@ public class AdresDAO implements AdresDAOInterface {
     }
 
     @Override
-    public boolean delete(Adres adres) {
+    public void delete(Adres adres) {
+        if (adres != null) {
+            this.reizigerDAO.deleteFromAdres(adres.getReiziger());
+        }
+    }
+
+    public void deleteFromReiziger(Adres adres) {
+        if (adres != null) {
+            this.__deleteOne(adres);
+        }
+    }
+
+    private void __deleteOne(Adres adres) {
         Transaction transaction;
         try {
             transaction = session.beginTransaction();
             session.remove(adres);
             transaction.commit();
 
-            return true;
         } catch(Exception e) {
             System.err.println( e.getMessage() );
-            return false;
         }
     }
+
+
 
     public Adres findById(int id) {
         String hql = "FROM Adres AS A WHERE A.id = :ID";

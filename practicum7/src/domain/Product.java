@@ -14,7 +14,7 @@ public class Product {
     private String beschrijving;
     private Double prijs;
 
-    @ManyToMany( cascade = {CascadeType.ALL} )
+    @ManyToMany( cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH} )
     @JoinTable( name = "ov_chipkaart_product",
         joinColumns = { @JoinColumn(name="kaart_nummer") },
         inverseJoinColumns = { @JoinColumn(name="product_nummer") }
@@ -32,7 +32,7 @@ public class Product {
         this.prijs = prijs;
     }
 
-    public void removeOvChipkaart(OVChipkaart ovChipkaart) {
+    public void removeOneOVChipkaart(OVChipkaart ovChipkaart) {
         List<OVChipkaart> ovList = this.ovChipkaart;
         int ovID = ovList.indexOf(ovChipkaart);
         ovList.remove(ovID);
@@ -96,6 +96,4 @@ public class Product {
             ovChipkaart.setProductList(productList, true);
         }
     }
-
-
 }

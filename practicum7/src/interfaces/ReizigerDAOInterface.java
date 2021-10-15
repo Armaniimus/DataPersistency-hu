@@ -11,7 +11,7 @@ import java.util.List;
 public interface ReizigerDAOInterface {
     boolean save(Reiziger reiziger);
     boolean update(Reiziger reiziger);
-    boolean delete(Reiziger reiziger);
+    void delete(Reiziger reiziger);
 
     Reiziger findById(int id);
     List<Reiziger> findByGeboorteDatum(String datum);

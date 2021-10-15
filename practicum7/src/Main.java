@@ -311,7 +311,7 @@ public class Main {
 
     private static void testOvchipkaartDelete() {
         List<OVChipkaart> OVChipkaarten = ovChipkaartDAO.findAll();
-        System.out.println("[Test] Eerst " + OVChipkaarten.size() + " Ovchipkaarten, na OVChipkaartDAO.delete() ");
+        System.out.print("[Test] Eerst " + OVChipkaarten.size() + " Ovchipkaarten, na OVChipkaartDAO.delete() ");
 
         OVChipkaart newOv = ovChipkaartDAO.findById( ovChipkaartTestID );
         ovChipkaartDAO.delete(newOv);
