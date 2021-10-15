@@ -75,7 +75,7 @@ public class Adres {
     public String getPostcode() {return postcode;}
     public void setPostcode(String postcode) {this.postcode = postcode;}
 
-//    public Reiziger getReiziger() {return this.reiziger;}
+    public Reiziger getReiziger() {return this.reiziger;}
     public void setReiziger(Reiziger reiziger, boolean relationCalled) {
         this.reiziger = reiziger;
         if (!relationCalled) {
