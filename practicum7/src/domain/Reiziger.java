@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-//@Table(name="reiziger")
+@Table(name="reiziger")
 public class Reiziger {
     @Id
     @Column(name = "reiziger_id")
@@ -75,10 +75,6 @@ public class Reiziger {
 
         return resultString;
     }
-
-//    public String getInfo() {
-//        return  "{ " + this.__internalGetInfo() + " }";
-//    }
 
     public String getInfoFromAdres() {
         String OvChipkaartListString = "";
