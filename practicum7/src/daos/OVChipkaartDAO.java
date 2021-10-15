@@ -43,9 +43,8 @@ public class OVChipkaartDAO implements OVChipkaartDAOInterface {
 
     @Override
     public boolean save(OVChipkaart ovChipkaart) {
-        Transaction transaction;
+        Transaction transaction = this.getTransaction();
         try {
-            transaction = session.beginTransaction();
             session.persist(ovChipkaart);
             transaction.commit();
 
@@ -58,9 +57,9 @@ public class OVChipkaartDAO implements OVChipkaartDAOInterface {
 
     @Override
     public boolean update(OVChipkaart ovChipkaart) {
-        Transaction transaction;
+        Transaction transaction = this.getTransaction();
+
         try {
-            transaction = session.beginTransaction();
             session.merge(ovChipkaart);
             transaction.commit();
 
@@ -72,10 +71,53 @@ public class OVChipkaartDAO implements OVChipkaartDAOInterface {
     }
 
     @Override
-    public boolean delete(OVChipkaart ovChipkaart) {
-        Transaction transaction;
+    public void delete(OVChipkaart ovChipkaart) {
         try {
-            transaction = session.beginTransaction();
+            this.__delete(ovChipkaart);
+
+            this.reizigerDAO.deleteFromOvChipkaart(ovChipkaart.getReiziger());
+
+            List<Product> producten = ovChipkaart.getProduct();
+            for (int i = 0; i < producten.size() ; i++) {
+                this.productDAO.deleteFromOvChipkaart(producten.get(i));
+            }
+        } catch(Exception err) {
+            System.err.println( err.getMessage() );
+        }
+    }
+
+    public void deleteFromReiziger(OVChipkaart ovChipkaart) {
+        try {
+            List<Product> producten = ovChipkaart.getProduct();
+            for (int i = 0; i < producten.size() ; i++) {
+                producten.get(i).removeOvChipkaart(ovChipkaart);
+                this.productDAO.update( producten.get(i) );
+            }
+
+            for (int i = 0; i < producten.size() ; i++) {
+                ovChipkaart.removeProduct( producten.get(i) );
+            }
+
+            this.update(ovChipkaart);
+//            this.__delete(ovChipkaart);
+        } catch(Exception err) {
+            System.err.println( err.getMessage() );
+        }
+    }
+
+//    public void deleteFromProduct(OVChipkaart ovChipkaart) {
+//        try {
+////            this.__delete(ovChipkaart);
+////            this.reizigerDAO.deleteFromOvChipkaart(ovChipkaart.getReiziger());
+//        } catch(Exception err) {
+//            System.err.println( err.getMessage() );
+//        }
+//    }
+
+    private boolean __delete(OVChipkaart ovChipkaart) {
+        Transaction transaction = this.getTransaction();
+        try {
+
             session.remove(ovChipkaart);
             transaction.commit();
 

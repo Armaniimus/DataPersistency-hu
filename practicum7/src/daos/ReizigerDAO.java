@@ -46,9 +46,9 @@ public class ReizigerDAO implements ReizigerDAOInterface {
 
     @Override
     public boolean save(Reiziger reiziger) {
-        Transaction transaction;
+        Transaction transaction = this.getTransaction();
         try {
-            transaction = session.beginTransaction();
+
             session.persist(reiziger);
             transaction.commit();
 
@@ -61,9 +61,9 @@ public class ReizigerDAO implements ReizigerDAOInterface {
 
     @Override
     public boolean update(Reiziger reiziger) {
-        Transaction transaction;
+        Transaction transaction = this.getTransaction();
         try {
-            transaction = session.beginTransaction();
+
             session.merge(reiziger);
             transaction.commit();
 
@@ -75,10 +75,44 @@ public class ReizigerDAO implements ReizigerDAOInterface {
     }
 
     @Override
-    public boolean delete(Reiziger reiziger) {
-        Transaction transaction;
+    public void delete(Reiziger reiziger) {
         try {
-            transaction = session.beginTransaction();
+            this.__delete(reiziger);
+            this.adresDAO.deleteFromReiziger(reiziger.getAdres());
+
+            List<OVChipkaart> ovList = reiziger.getOvChipkaart();
+            for (int i = 0; i < ovList.size() ; i++) {
+                this.ovChipkaartDAO.deleteFromReiziger(ovList.get(i));
+            }
+        } catch(Exception err) {
+            System.err.println( err.getMessage() );
+        }
+    }
+
+    public void deleteFromAdres(Reiziger reiziger) {
+        try {
+            this.__delete(reiziger);
+            List<OVChipkaart> ovList = reiziger.getOvChipkaart();
+            for (int i = 0; i < ovList.size() ; i++) {
+                this.ovChipkaartDAO.deleteFromReiziger(ovList.get(i));
+            }
+        } catch(Exception err) {
+            System.err.println( err.getMessage() );
+        }
+    }
+
+    public void deleteFromOvChipkaart(Reiziger reiziger) {
+        try {
+            this.__delete(reiziger);
+            this.adresDAO.deleteFromReiziger(reiziger.getAdres());
+        } catch(Exception err) {
+            System.err.println( err.getMessage() );
+        }
+    }
+
+    private boolean __delete(Reiziger reiziger) {
+        Transaction transaction = this.getTransaction();
+        try {
             session.remove(reiziger);
             transaction.commit();
 

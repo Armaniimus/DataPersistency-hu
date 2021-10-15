@@ -21,7 +21,7 @@ public class Reiziger {
     @OneToOne(mappedBy = "reiziger", cascade = {CascadeType.ALL})
     private Adres adres;
 
-    @OneToMany(mappedBy = "reiziger", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "reiziger", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<OVChipkaart> ovChipkaart;
 
     public Reiziger() {

@@ -10,7 +10,7 @@ import java.util.List;
 public interface OVChipkaartDAOInterface {
     boolean save(OVChipkaart ovChipkaart);
     boolean update(OVChipkaart ovChipkaart);
-    boolean delete(OVChipkaart ovChipkaart);
+    void delete(OVChipkaart ovChipkaart);
 
     OVChipkaart findById(int id);
     List<OVChipkaart> findAll();

@@ -14,10 +14,10 @@ public class Product {
     private String beschrijving;
     private Double prijs;
 
-    @ManyToMany( cascade = {CascadeType.ALL} )
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
     @JoinTable( name = "ov_chipkaart_product",
         joinColumns = { @JoinColumn(name="kaart_nummer") },
-        inverseJoinColumns = { @JoinColumn(name="product_nummer") }
+        inverseJoinColumns= { @JoinColumn(name="product_nummer") }
     )
     private List<OVChipkaart> ovChipkaart;
 

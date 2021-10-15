@@ -38,9 +38,9 @@ public class ProductDAO implements ProductDAOInterface {
 
     @Override
     public boolean save( Product product) {
-        Transaction transaction;
+        Transaction transaction = this.getTransaction();
+
         try {
-            transaction = session.beginTransaction();
             session.persist(product);
             transaction.commit();
 
@@ -53,9 +53,10 @@ public class ProductDAO implements ProductDAOInterface {
 
     @Override
     public boolean update( Product product) {
-        Transaction transaction;
+        Transaction transaction = this.getTransaction();
+
         try {
-            transaction = session.beginTransaction();
+
             session.merge(product);
             transaction.commit();
 
@@ -67,10 +68,29 @@ public class ProductDAO implements ProductDAOInterface {
     }
 
     @Override
-    public boolean delete( Product product ) {
-        Transaction transaction;
+    public void delete( Product product ) {
         try {
-            transaction = session.beginTransaction();
+            List<OVChipkaart> ovList =product.getOvChipkaart();
+            for (int i = 0; i < ovList.size(); i++) {
+                ovList.get(i).removeProduct( product );
+                product.removeOvChipkaart( ovList.get(i) );
+            }
+
+            this.update(product);
+            this.__delete(product);
+        } catch(Exception err) {
+            System.err.println( err.getMessage() );
+        }
+    }
+
+    public void deleteFromOvChipkaart( Product product ) {
+        this.__delete(product);
+    }
+
+    private boolean __delete(Product product ) {
+        Transaction transaction = this.getTransaction();
+
+        try {
             session.remove(product);
             transaction.commit();
 

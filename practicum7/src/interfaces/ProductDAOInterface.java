@@ -10,7 +10,7 @@ import java.util.List;
 public interface ProductDAOInterface {
     boolean save(Product product);
     boolean update(Product product);
-    boolean delete(Product product);
+    void delete(Product product);
 
     Product findById(int id);
     List<Product> findAll();

@@ -37,24 +37,24 @@ public class AdresDAO implements AdresDAOInterface {
 
     @Override
     public boolean save(Adres adres) {
-        Transaction transaction;
+        Transaction transaction = getTransaction();
+
         try {
-            transaction = session.beginTransaction();
             session.persist(adres);
             transaction.commit();
 
             return true;
         } catch(Exception e) {
-            System.err.println( e.getMessage() );
+            System.err.println( e.getMessage() + transaction.getStatus() );
             return false;
         }
     }
 
     @Override
     public boolean update(Adres adres) {
-        Transaction transaction;
+        Transaction transaction = this.getTransaction();
+
         try {
-            transaction = session.beginTransaction();
             session.merge(adres);
             transaction.commit();
 
@@ -66,10 +66,23 @@ public class AdresDAO implements AdresDAOInterface {
     }
 
     @Override
-    public boolean delete(Adres adres) {
-        Transaction transaction;
+    public void delete(Adres adres) {
         try {
-            transaction = session.beginTransaction();
+            reizigerDAO.deleteFromAdres(adres.getReiziger());
+            this.__delete(adres);
+        } catch(Exception err) {
+            System.err.println( err.getMessage() );
+        }
+    }
+
+    public void deleteFromReiziger(Adres adres) {
+        this.__delete(adres);
+    }
+
+    private boolean __delete(Adres adres) {
+        Transaction transaction = getTransaction();
+
+        try {
             session.remove(adres);
             transaction.commit();
 
