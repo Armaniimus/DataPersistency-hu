@@ -21,7 +21,7 @@ public class Adres {
 
     }
 
-    public Adres (int id, String straat, String huisnummer, String woonplaats, String postcode, int reiziger_id) {
+    public Adres (int id, String straat, String huisnummer, String woonplaats, String postcode) {
         this.id = id;
         this.straat = straat;
         this.huisnummer = huisnummer;

@@ -30,7 +30,7 @@ public class OVChipkaart {
 
     }
 
-    public OVChipkaart(int kaart_nummer, Date geldigTot, int klasse, Double saldo, int reiziger_id) {
+    public OVChipkaart(int kaart_nummer, Date geldigTot, int klasse, Double saldo) {
         this.kaart_nummer = kaart_nummer;
         this.geldigTot = geldigTot;
         this.klasse = klasse;
