@@ -19,11 +19,11 @@ public class OVChipkaart {
     private int klasse;
     private Double saldo;
 
-    @ManyToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH } )
+    @ManyToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE } )
     @JoinColumn(name = "reiziger_id")
     private Reiziger reiziger;
 
-    @ManyToMany(mappedBy = "ovChipkaart", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH} )
+    @ManyToMany(mappedBy = "ovChipkaart", cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
     private List<Product> product;
 
     public OVChipkaart() {

@@ -13,7 +13,7 @@ public class Adres {
     private String postcode;
 
 
-    @OneToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH} )
+    @OneToOne( cascade = {CascadeType.PERSIST, CascadeType.MERGE} )
     @JoinColumn(name = "reiziger_id")
     private Reiziger reiziger;
 
